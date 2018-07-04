@@ -104,7 +104,7 @@ class MLClassifier {
   }
 
   // handlerOrURL?: tf.io.IOHandler | string;
-  public save = async(handlerOrURL: string = getDefaultDownloadHandler()) => {
+  public save = async(handlerOrURL: string = getDefaultDownloadHandler(this.data)) => {
     await this.loaded();
     console.assert(this.model, 'You must call train prior to calling save');
 
