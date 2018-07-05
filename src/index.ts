@@ -19,6 +19,7 @@ const defaultParams = {
   loss: 'categoricalCrossentropy',
   optimizer: tf.train.adam(0.0001),
   callbacks: {},
+  validationSplit: 0.2,
 };
 
 class MLClassifier {

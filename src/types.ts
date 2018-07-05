@@ -25,6 +25,7 @@ export interface IParamsCallbacks {
   onEpochEnd?: Function;
   onBatchBegin?: Function;
   onBatchEnd?: Function;
+  onEvaluate?: Function;
 };
 
 export interface IConfigurationParams {
@@ -49,9 +50,10 @@ export interface IConfigurationParams {
   sampleWeight?: tf.Tensor;
   initialEpoch?: number;
   stepsPerEpoch?: number;
+  steps?: number;
   validationSteps?: number;
   metrics?: string[] | {[outputName: string]: string};
-  verbose?: boolean;
+  verbose?: any;
 }
 
 export interface IParams {
@@ -68,7 +70,7 @@ export interface IParams {
   model?: tf.Model;
   batchSize?: number;
   epochs?: number;
-  callbacks?: IParamsCallbacks;
+  callbacks: IParamsCallbacks;
   validationSplit?: number;
   validationData?: [ tf.Tensor|tf.Tensor[], tf.Tensor|tf.Tensor[] ]|[tf.Tensor | tf.Tensor[], tf.Tensor|tf.Tensor[], tf.Tensor|tf.Tensor[]];
   shuffle?: boolean;
@@ -76,8 +78,10 @@ export interface IParams {
   sampleWeight?: tf.Tensor;
   initialEpoch?: number;
   stepsPerEpoch?: number;
+  steps?: number;
   validationSteps?: number;
   metrics?: string[] | {[outputName: string]: string};
-  verbose?: boolean;
+  // verbose?: boolean;
+  verbose?: any;
   handlerOrURL?: string;
 };

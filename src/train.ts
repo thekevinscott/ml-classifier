@@ -42,6 +42,7 @@ const train = async ({
   ys,
   classes,
 }: ITrainingOpts, params: IParams) => {
+  console.log('train!');
   if (xs === null || ys === null) {
     throw new Error('Add some examples before training!');
   }
@@ -55,6 +56,7 @@ const train = async ({
   model.compile({
     optimizer: params.optimizer,
     loss: params.loss,
+    metrics: ['accuracy'],
   });
 
   const batchSize = params.batchSize || Math.floor(xs.shape[0] * 0.4);
@@ -65,7 +67,14 @@ const train = async ({
     {
       batchSize,
       epochs: params.epochs,
-      callbacks: transformCallbacks(params.callbacks),
+      callbacks: transformCallbacks({
+        onTrainBegin: params.callbacks.onTrainBegin,
+        onTrainEnd: params.callbacks.onTrainEnd,
+        onEpochBegin: params.callbacks.onEpochBegin,
+        onEpochEnd: params.callbacks.onEpochEnd,
+        onBatchBegin: params.callbacks.onBatchBegin,
+        onBatchEnd: params.callbacks.onBatchEnd,
+      }),
       validationSplit: params.validationSplit,
       validationData: params.validationData,
       shuffle: params.shuffle,
@@ -74,8 +83,20 @@ const train = async ({
       initialEpoch: params.initialEpoch,
       stepsPerEpoch: params.stepsPerEpoch,
       validationSteps: params.validationSteps,
+      verbose: params.verbose,
     },
   );
+
+  console.log('callbacks', params.callbacks);
+  if (params.callbacks.onEvaluate) {
+    const evaluation = await model.evaluate(xs, ys, {
+      batchSize,
+      verbose: params.verbose,
+      sampleWeight: params.sampleWeight,
+      steps: params.steps,
+    });
+    params.callbacks.onEvaluate(evaluation);
+  }
 
   return model;
 };
