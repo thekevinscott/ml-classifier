@@ -63,7 +63,12 @@ class MLClassifier {
     return this.pretrainedModel.predict(processedImage);
   }
 
-  public train = async (images: IImage[]) => {
+  public train = async (images: IImage[], params: IConfigurationParams = {}) => {
+    this.params = {
+      ...this.params,
+      ...params,
+    };
+
     const activatedImages = await Promise.all(images.map(async (image: IImage) => {
       const img = await this.prepareData(image.data);
       return {
@@ -86,6 +91,7 @@ class MLClassifier {
     await this.loaded();
     console.assert(this.model, 'You must call train prior to calling predict');
     const img = await this.prepareData(data);
+    // TODO: Do these images need to be activated?
     const predictedClass = tf.tidy(() => {
       const predictions = this.model.predict(img);
       // TODO: address this
@@ -108,7 +114,7 @@ class MLClassifier {
     await this.loaded();
     console.assert(this.model, 'You must call train prior to calling save');
 
-    this.model.save(handlerOrURL);
+    await this.model.save(handlerOrURL);
 
     return this;
   }
