@@ -1,6 +1,6 @@
 {
   "name": "ml-classifier",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A package for creating image-based machine learning models",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -32,8 +32,11 @@
       "json"
     ]
   },
-  "peerDependencies": {},
+  "peerDependencies": {
+    "@tensorflow/tfjs": "^0.11.7"
+  },
   "devDependencies": {
+    "@tensorflow/tfjs": "^0.11.7",
     "@babel/core": "^7.0.0-beta.51",
     "@babel/plugin-proposal-decorators": "^7.0.0-beta.51",
     "@babel/plugin-transform-classes": "^7.0.0-beta.51",
@@ -58,7 +61,6 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
-    "@tensorflow/tfjs": "^0.11.7",
     "haikunator": "^2.0.0"
   }
 }

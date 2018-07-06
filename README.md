@@ -80,7 +80,7 @@ mlClassifier.save();
 
 ## constructor
 
-Accepts a configuration object as specified in configuration.
+Accepts a configuration object as specified in configuration. This configuration object, or `params`, will be persisted for the lifetime of `MLClassifier`.
 
 ## `train`
 
@@ -102,9 +102,15 @@ mlClassifer.train([{
 });
 ```
 
-Any parameters provided will overwrite the initialized parameters and persist for the life of the model.
+Any parameters provided will take precedence over parameters provided to the constructor.
 
 `train` returns itself to allow for chaining.
+
+## `evaluate`
+`evaluate` accepts an array of images and an optional set of parameters.
+
+Any parameters provided will take precedence over parameters provided to the constructor.
+
 
 ## `predict`
 

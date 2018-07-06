@@ -8,14 +8,14 @@ import {
 
 const oneHot = (labelIndex: number, classLength: number) => tf.tidy(() => tf.oneHot(tf.tensor1d([labelIndex]).toInt(), classLength));
 
-const prepareTrainingData = (images: IActivatedImage[]) => {
+const prepareTrainingData = (images: IActivatedImage[]): ITrainingData => {
   return images.reduce((data: ITrainingData, { activation, label }: IActivatedImage) => {
     const labelIndex = data.classes[label];
     const classLength = Object.keys(data.classes).length;
     const y = oneHot(labelIndex, classLength);
 
     return tf.tidy(() => {
-      if (data.xs === null || data.ys === null) {
+      if (data.xs === undefined || data.ys === undefined) {
         return {
           ...data,
           xs: tf.keep(activation),
@@ -41,8 +41,6 @@ const prepareTrainingData = (images: IActivatedImage[]) => {
     });
   }, {
     classes: getClasses(images),
-    xs: null,
-    ys: null,
   });
 };
 

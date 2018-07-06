@@ -19,7 +19,6 @@ const defaultParams = {
   loss: 'categoricalCrossentropy',
   optimizer: tf.train.adam(0.0001),
   callbacks: {},
-  validationSplit: 0.2,
 };
 
 class MLClassifier {
@@ -65,7 +64,7 @@ class MLClassifier {
   }
 
   public train = async (images: IImage[], params: IConfigurationParams = {}) => {
-    this.params = {
+    const combinedParams = {
       ...this.params,
       ...params,
     };
@@ -80,10 +79,14 @@ class MLClassifier {
 
     this.data = prepareTrainingData(activatedImages);
 
-    this.model = await train({
-      ...this.data,
-      classes: Object.keys(this.data.classes).length,
-    }, this.params);
+    try {
+      this.model = await train({
+        ...this.data,
+        classes: Object.keys(this.data.classes).length,
+      }, combinedParams);
+    } catch(err) {
+      throw err;
+    }
 
     return this;
   }
@@ -109,6 +112,43 @@ class MLClassifier {
       [val]: key,
     }), {})[classId];
   }
+
+  // public evaluate = async (images: IImage[], params: IConfigurationParams = {}) => {
+  //   await this.loaded();
+  //   console.assert(this.model, 'You must call train prior to calling evaluate');
+  //   const combinedParams = {
+  //     ...this.params,
+  //     ...params,
+  //   };
+
+  //   const activatedImages = await Promise.all(images.map(async (image: IImage) => {
+  //     const img = await this.prepareData(image.data);
+  //     return {
+  //       activation: img,
+  //       label: image.label,
+  //     };
+  //   }));
+
+  //   const {
+  //     xs,
+  //     ys,
+  //   } = prepareTrainingData(activatedImages);
+
+  //   if (xs !== undefined && ys !== undefined) {
+  //     console.assert(this.model, 'You must call train prior to calling save');
+  //     return await this.model.evaluate({
+  //       xs,
+  //       ys,
+  //     }, {
+  //       batchSize: combinedParams.batchSize,
+  //       verbose: combinedParams.verbose,
+  //       sampleWeight: combinedParams.sampleWeight,
+  //       steps: combinedParams.steps,
+  //     });
+  //   }
+
+  //   return this;
+  // }
 
   // handlerOrURL?: tf.io.IOHandler | string;
   public save = async(handlerOrURL: string = getDefaultDownloadHandler(this.data)) => {

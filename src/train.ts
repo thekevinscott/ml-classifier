@@ -5,8 +5,8 @@ import {
 } from './types';
 
 interface ITrainingOpts {
-  xs: tf.Tensor3D | null;
-  ys: tf.Tensor2D | null;
+  xs?: tf.Tensor3D;
+  ys?: tf.Tensor2D;
   classes: number;
 }
 
@@ -26,6 +26,18 @@ const defaultLayers = ({ classes }: ITrainingOpts) => [
   })
 ];
 
+const getBatchSize = (params: IParams, xs?: tf.Tensor3D) => {
+  if (params.batchSize) {
+    return params.batchSize;
+  }
+
+  if (xs !== undefined) {
+    return Math.floor(xs.shape[0] * 0.4);
+  }
+
+  return undefined;
+};
+
 const transformCallbacks = (callbacks: IParamsCallbacks = {}) => Object.entries(callbacks).reduce((callbackObj, [
   key,
   callback,
@@ -42,8 +54,7 @@ const train = async ({
   ys,
   classes,
 }: ITrainingOpts, params: IParams) => {
-  console.log('train!');
-  if (xs === null || ys === null) {
+  if (xs === undefined || ys === undefined) {
     throw new Error('Add some examples before training!');
   }
 
@@ -59,7 +70,7 @@ const train = async ({
     metrics: ['accuracy'],
   });
 
-  const batchSize = params.batchSize || Math.floor(xs.shape[0] * 0.4);
+  const batchSize = getBatchSize(params, xs);
 
   await model.fit(
     xs,
@@ -86,17 +97,6 @@ const train = async ({
       verbose: params.verbose,
     },
   );
-
-  console.log('callbacks', params.callbacks);
-  if (params.callbacks.onEvaluate) {
-    const evaluation = await model.evaluate(xs, ys, {
-      batchSize,
-      verbose: params.verbose,
-      sampleWeight: params.sampleWeight,
-      steps: params.steps,
-    });
-    params.callbacks.onEvaluate(evaluation);
-  }
 
   return model;
 };
