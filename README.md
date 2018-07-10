@@ -1,10 +1,12 @@
 # ML Classifier
 
-ML Classifier is a tool built on top of TensorflowJS to allow you to quickly train image classifiers in your browser using machine learning.
+ML Classifier is a machine learning engine for quickly training image classification models in your browser. Models can be saved with a single command, and the resulting models reused to make image classification predictions.
 
-Trained models can be saveed with the click of a button, and the resulting models reused in your Javascript application.
+## Getting Started
 
-# Installation
+### Installation
+
+`ml-classifier` can be installed via `yarn` or `npm`:
 
 ```
 yarn add ml-classifier
@@ -16,14 +18,20 @@ or
 npm install ml-classifier
 ```
 
-# Quick Start
+### Quick Start
 
-Start by instantiating a new MLClassifier. The constructor accepts a set of configuration parameters, detailed below.
+Start by instantiating a new MLClassifier.
 
 ```
 import MLClassifier from 'ml-classifier';
 
-const mlClassifier = new MLClassifier({
+const mlClassifier = new MLClassifier();
+```
+
+Then, train the model:
+
+```
+await mlClassifier.train(imageData, {
   callbacks: {
     onTrainBegin: () => {
       console.log('training begins');
@@ -33,12 +41,6 @@ const mlClassifier = new MLClassifier({
     }
   },
 });
-```
-
-Then, train the model:
-
-```
-await mlClassifier.train(imageData);
 ```
 
 And get predictions:
@@ -53,101 +55,190 @@ When you have a trained model you're happy with, save it with:
 mlClassifier.save();
 ```
 
-# Configuration
+## API Documentation
 
-`MLClassifier` accepts a number of parameters:
+Start by instantiating a new instance of `MLClassifier` with:
 
-* `optimizer` (*tf.train.Optimizer) - A custom optimizer to use. Optional. Default is `tf.train.adam(0.0001)`.
-* `loss` (*string*) - A custom loss function. Optional. Default is `categoricalCrossentropy`.
-* `layers` (*function*) - A custom function to build the model's layers. Optional.
-* `model` (*tf.Model*) - a custom tf.Model to use.
-* `batchSize` (*number*) - Number of samples per gradient update. Optional.
-* `epochs` (*number*) The number of times to iterate over the training data arrays. Optional. Default is 20.
-* `callbacks` (*object*) - An object of callbacks to pass to `tf.model.fit`. Optional.
-* `validationSplit` (*number*) - Float between 0 and 1 specifying the fraction of training data to be used as validation data. Optional.
-* `validationData` (*([ tf.Tensor|tf.Tensor[], tf.Tensor|tf.Tensor[] ]|[tf.Tensor | tf.Tensor[], tf.Tensor|tf.Tensor[], tf.Tensor|tf.Tensor[]]*) - Data on which to evaluate the loss and any model metrics. Optional.
-* `shuffle` (*boolean*) - Whether to shuffle the training data before each epoch. Optional.
-* `classWeight` ({[classIndex: string]: number}) Optional dictionary mapping class indices (integers) to a weight (float) to apply to the model's loss for the samples from this class during training. Optional.
-* `sampleWeight` (*tf.Tensor*) Optional array of the same length as x, containing weights to apply to the model's loss for each sample. In the case of temporal data, you can pass a 2D array with shape (samples, sequenceLength), to apply a different weight to every timestep of every sample. In this case you should make sure to specify sampleWeightMode="temporal" in compile(). Optional
-* `initialEpoch` (*number*) - Epoch at which to start training (useful for resuming a previous training run). Optional
-* `stepsPerEpoch` (*number*) - Total number of steps (batches of samples) before declaring one epoch finished and starting the next epoch. When training with Input Tensors such as TensorFlow data tensors, the default null is equal to the number of unique samples in your dataset divided by the batch size, or 1 if that cannot be determined. Optional
-* `validationSteps` ((number*) - Only relevant if stepsPerEpoch is specified. Total number of steps (batches of samples) to validate before stopping. Optional
-* `metrics` (*string[]|{[outputName: string]: string}*) - List of metrics to be evaluated by the model during training and testing. Typically you will use metrics=['accuracy']. To specify different metrics for different outputs of a multi-output model, you could also pass a dictionary. Optional
-* `batchSize` (*number*) - Batch size (Integer). If unspecified, it will default to 32. Optional
-* `verbose` (*ModelLoggingVerbosity*) - Verbosity mode. Optional
+```
+const mlClassifier = new MLClassifier();
+```
 
-# Methods
+This will begin loading the pretrained model and provide you with an object onto which to add data and train.
 
-## constructor
-
-Accepts a configuration object as specified in configuration. This configuration object, or `params`, will be persisted for the lifetime of `MLClassifier`.
-
-## `addData`
+### `addData`
 
 This method takes an array of incoming images, an optional array of labels, and an optional dataType.
 
-If `dataType` is not supplied, `train` is set.
-
-labels are mandatory if the `dataType` is `train`.
-
-`addData` will take the incoming images, crop each one, expand their dimensions, and cast to a float representing the pixel value. It will then run each image through the preloaded model to get an activation.
-
-## `train`
-
-Used to kick off the classifier training.
-
-* `images` - An array of images to train on. Images should be an array of objects in the format `{ label: 'string', data: 'tf.Tensor3D' }`, where `data` is a tensor matching the pixel data of the image.
-* `params` - An optional list of parameters matching the configuration object above.
+#### Example
 
 ```
-mlClassifer.train([{
-  data: { ... pixelData },
-  label: 'strawberry',
-}, {
-  data: { ... pixelData },
-  label: 'blueberry',
-}], {
-  epochs: 20,
-  batchSize: 10,
+import MLClassifier, { DataType } from 'ml-classifier';
+mlClassifier.addData(images, labels, DataType.TRAIN);
+```
+
+#### Parameters
+
+* **images** (`Tensor3D[]`) - an array of 3D tensors. Images can be any sizes, but will be cropped and sized down to match the pretrained model.
+* **labels** (`string[]`) - an array of strings, matching the images passed above.
+* **dataType** (`DataType`) *Optional* - an enum specifying which data type the images match. Data types can be `DataType.TRAIN` for data used in `model.train()`, and `DataType.EVAL`, for data used in `model.evaluate()`. If no argument is supplied, `dataType` will default to `DataType.TRAIN`.
+
+#### Returns
+`null`
+
+### `train`
+
+`train` begins training on the given dataset.
+
+#### Example
+
+```
+import MLClassifier, { DataType } from 'ml-classifier';
+mlClassifier.addData(images, labels, DataType.TRAIN);
+mlClassifier.train({
+  callbacks: {
+    onTrainBegin: () => {
+      console.log('training begins');
+    },
+  },
 });
 ```
 
-Any parameters provided will take precedence over parameters provided to the constructor.
+#### Parameters
+
+* **params** (`Object`) *Optional* - a set of parameters that will be passed directly to `model.fit`. [View the Tensorflow.JS docs](https://js.tensorflow.org/api/0.12.0/#tf.Model.fit) for an up-to-date list of arguments.
+
+#### Returns
+
+`train` returns the resolved promise from `fit`, an object containing loss and accuracy.
 
 ## `evaluate`
-`evaluate` accepts an array of images and an optional set of parameters.
 
-Any parameters provided will take precedence over parameters provided to the constructor.
+`evaluate` is used to evaluate a model's performance.
 
+#### Example
+
+```
+import MLClassifier, { DataType } from 'ml-classifier';
+mlClassifier.addData(images, labels, DataType.TRAIN);
+mlClassifier.train();
+mlClassifier.addData(evaluationImages, labels, DataType.EVALUATE);
+mlClassifier.evaluate();
+```
+
+#### Parameters
+
+* **params** (`Object`) *Optional* - a set of parameters that will be passed directly to `model.evaluate`. [View the Tensorflow.JS docs](https://js.tensorflow.org/api/0.12.0/#tf.Sequential.evaluate) for an up-to-date list of arguments.
+
+#### Returns
+
+`evaluate` returns a tf.Scalar representing the result of `evaluate`.
 
 ## `predict`
 
-`predict` returns a prediction for a single image. An image is specified as a 3 dimensional tensor.
+`predict` is used to make a specific prediction using a saved model.
+
+#### Example
 
 ```
-ml.predict(imageData);
+import MLClassifier, { DataType } from 'ml-classifier';
+mlClassifier.addData(images, labels, DataType.TRAIN);
+mlClassifier.train();
+mlClassifier.predict(imageToPredict);
 ```
 
-ml.predict accepts a single pixel data array, and returns a single class prediction.
+#### Parameters
+
+* **image** (`tf.Tensor3D`) - a single image encoded as a `tf.Tensor3D`. Image can be any size, but will be cropped and sized down to match the pretrained model.
+
+#### Returns
+
+`predict` will return a string matching the prediction.
 
 ## `save`
 
-`save` will initiate a download from the browser.
+`save` is a proxy to `tf.model.save`, and will initiate a download from the browser, or save to local storage.
+
+#### Example
 
 ```
-ml.save(handlerOrURL?);
+import MLClassifier, { DataType } from 'ml-classifier';
+mlClassifier.addData(images, labels, DataType.TRAIN);
+mlClassifier.train();
+mlClassifier.save(('path-to-save');
 ```
 
-`save` accepts a `handlerOrURL` argument which can be a string or an `io.IOHandler`.
+#### Parameters
 
-# Build
+* **handlerOrUrl** (`io.IOHandler | string`) *Optional* - an argument to be passed to `model.save`. If omitted, the model's unique labels will be concatenated together in the form of `class1-class2-class3`.
+
+## `getModel`
+
+`getModel` will return the trained Tensorflow.js model. Calling this method prior to calling `mlClassifier.train` will return `null`.
+
+#### Example
+
+```
+import MLClassifier, { DataType } from 'ml-classifier';
+mlClassifier.addData(images, labels, DataType.TRAIN);
+mlClassifier.train();
+mlClassifier.getModel();
+```
+
+#### Parameters
+
+None.
+
+#### Returns
+
+The saved Tensorflow.js model.
+
+## `clearData`
+
+`clearData` will clear out saved data.
+
+#### Example
+```
+import MLClassifier, { DataType } from 'ml-classifier';
+mlClassifier.addData(images, labels, DataType.TRAIN);
+mlClassifier.clearData(DataType.TRAIN);
+```
+
+#### Parameters
+
+* **dataType** (`DataType`) *Optional* - specifies which data to clear. If no argument is provided, all data will be cleared.
+
+#### Returns
+
+Nothing.
+
+## Contributing
+
+Contributions are welcome!
+
+You can start up a local copy of `ml-classifier` with:
 
 ```
 yarn watch
 ```
 
-# Tests
+### clearData
+
+`ml-classifier` is written in Typescript.
+
+### Tests
+
+Tests are a work in progress. Currently, the test suite only consists of unit tests. Pull requests for additional tests are welcome!
+
+Run tests with:
 
 ```
 yarn test
 ```
+
+## Author
+
+* [Kevin Scott](https://thekevinscott.com)
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details

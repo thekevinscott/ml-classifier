@@ -14,24 +14,16 @@ import getDefaultDownloadHandler from './getDefaultDownloadHandler';
 console.log('i am the ml classifier v2');
 
 import {
-  IConfigurationParams,
   IParams,
+  // IConfigurationParams,
   IData,
   ICollectedData,
   DataType,
 } from './types';
 
-const defaultParams = {
-  epochs: 20,
-  loss: 'categoricalCrossentropy',
-  optimizer: tf.train.adam(0.0001),
-  callbacks: {},
-};
-
-export { DataType } from './types';;
+export { DataType } from './types';
 
 class MLClassifier {
-  private params: IParams;
   // private pretrainedModel: typeof tf.model;
   private pretrainedModel: any;
   private model: tf.Sequential;
@@ -41,12 +33,7 @@ class MLClassifier {
   };
   public tf = tf;
 
-  constructor(params: IConfigurationParams = {}) {
-    this.params = {
-      ...defaultParams,
-      ...params,
-    };
-
+  constructor() {
     this.init();
   }
 
@@ -55,9 +42,6 @@ class MLClassifier {
 
     this.callbacks.map(callback => callback());
   }
-
-  public getModel = () => this.model;
-  public getParams = () => this.params;
 
   private loaded = async () => new Promise(resolve => {
     if (this.pretrainedModel) {
@@ -75,15 +59,21 @@ class MLClassifier {
     return this.pretrainedModel.predict(processedImage);
   }
 
-  public addData = async (images: tf.Tensor3D[], labels?: string[], dataType?: DataType) => {
-    if (!dataType) {
-      if (typeof labels === 'string') {
-        dataType = labels;
-      } else {
-        dataType = DataType.TRAIN;
-      }
+  private getData = async (dataType: DataType): Promise<ICollectedData> => {
+    if (!this.data[dataType]) {
+      throw new Error(`Datatype ${dataType} unsupported`);
     }
 
+    return {
+      xs: this.data[dataType].xs,
+      ys: this.data[dataType].ys,
+      classes: this.data.classes,
+    };
+  }
+
+  public getModel = () => this.model;
+
+  public addData = async (images: tf.Tensor3D[], labels: string[], dataType: DataType = DataType.TRAIN) => {
     if (dataType === DataType.TRAIN || dataType === DataType.EVAL) {
       if (!labels) {
         throw new Error(`You must provide labels when supplying ${dataType} data`);
@@ -122,19 +112,7 @@ class MLClassifier {
     this.data[DataType.EVAL] = {};
   }
 
-  private getData = async (dataType: DataType): Promise<ICollectedData> => {
-    if (!this.data[dataType]) {
-      throw new Error(`Datatype ${dataType} unsupported`);
-    }
-
-    return {
-      xs: this.data[dataType].xs,
-      ys: this.data[dataType].ys,
-      classes: this.data.classes,
-    };
-  }
-
-  public train = async (params: IConfigurationParams = {}) => {
+  public train = async (params: IParams = {}) => {
     await this.loaded();
     const data = await this.getData(DataType.TRAIN);
 
@@ -146,10 +124,7 @@ class MLClassifier {
     const {
       model,
       history,
-    } = await train(data, classes, {
-      ...this.params,
-      ...params,
-    });
+    } = await train(data, classes, params);
 
     this.model = model;
     return history;
@@ -179,7 +154,7 @@ class MLClassifier {
     }), {})[classId];
   }
 
-  public evaluate = async (params: IConfigurationParams = {}) => {
+  public evaluate = async (params: IParams = {}) => {
     await this.loaded();
     if (!this.model) {
       throw new Error('You must call train prior to calling predict');
@@ -190,17 +165,7 @@ class MLClassifier {
       throw new Error('You must add some evaluation examples');
     }
 
-    const combinedParams = {
-        ...this.params,
-        ...params,
-    };
-
-    return await this.model.evaluate(data.xs, data.ys, {
-      batchSize: combinedParams.batchSize,
-      verbose: combinedParams.verbose,
-      sampleWeight: combinedParams.sampleWeight,
-      steps: combinedParams.steps,
-    });
+    return await this.model.evaluate(data.xs, data.ys, params);
   }
 
   // handlerOrURL?: tf.io.IOHandler | string;

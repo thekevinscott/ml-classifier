@@ -1,12 +1,10 @@
 import * as tf from '@tensorflow/tfjs';
 import {
   IParams,
-  IParamsCallbacks,
   IImageData,
 } from './types';
 
 const defaultLayers = ({ classes }: { classes: number }) => {
-  console.log('classes', classes);
   return [
     tf.layers.flatten({inputShape: [7, 7, 256]}),
     tf.layers.dense({
@@ -24,9 +22,9 @@ const defaultLayers = ({ classes }: { classes: number }) => {
   ];
 };
 
-const getBatchSize = (params: IParams, xs?: tf.Tensor3D) => {
-  if (params.batchSize) {
-    return params.batchSize;
+const getBatchSize = (batchSize?: number, xs?: tf.Tensor3D) => {
+  if (batchSize) {
+    return batchSize;
   }
 
   if (xs !== undefined) {
@@ -36,23 +34,6 @@ const getBatchSize = (params: IParams, xs?: tf.Tensor3D) => {
   return undefined;
 };
 
-const transformCallbacks = (callbacks: IParamsCallbacks = {}) => Object.entries(callbacks).reduce((callbackObj, [
-  key,
-  callback,
-]) => {
-  if (callback) {
-    return {
-      ...callbackObj,
-      [key]: async (...args: any[]) => {
-        callback(...args);
-        await tf.nextFrame();
-      }
-    };
-  }
-
-  return callbackObj;
-}, {});
-
 const train = async ({
   xs,
   ys,
@@ -61,43 +42,27 @@ const train = async ({
     throw new Error('Add some examples before training!');
   }
 
-  const layers = params.layers || defaultLayers;
-
   const model = tf.sequential({
-    layers: layers({ classes }),
+    layers: defaultLayers({ classes }),
   });
 
+  const optimizer = tf.train.adam(0.0001);
+
   model.compile({
-    optimizer: params.optimizer,
-    loss: params.loss,
+    optimizer,
+    loss: 'categoricalCrossentropy',
     metrics: ['accuracy'],
   });
 
-  const batchSize = getBatchSize(params, xs);
+  const batchSize = getBatchSize(params.batchSize, xs);
 
   const history = await model.fit(
     xs,
     ys,
     {
+      ...params,
       batchSize,
-      epochs: params.epochs,
-      callbacks: transformCallbacks({
-        onTrainBegin: params.callbacks.onTrainBegin,
-        onTrainEnd: params.callbacks.onTrainEnd,
-        onEpochBegin: params.callbacks.onEpochBegin,
-        onEpochEnd: params.callbacks.onEpochEnd,
-        onBatchBegin: params.callbacks.onBatchBegin,
-        onBatchEnd: params.callbacks.onBatchEnd,
-      }),
-      validationSplit: params.validationSplit,
-      validationData: params.validationData,
-      shuffle: params.shuffle,
-      classWeight: params.classWeight,
-      sampleWeight: params.sampleWeight,
-      initialEpoch: params.initialEpoch,
-      stepsPerEpoch: params.stepsPerEpoch,
-      validationSteps: params.validationSteps,
-      verbose: params.verbose,
+      epochs: params.epochs || 20,
     },
   );
 
