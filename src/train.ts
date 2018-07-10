@@ -41,13 +41,19 @@ const getBatchSize = (params: IParams, xs?: tf.Tensor3D) => {
 const transformCallbacks = (callbacks: IParamsCallbacks = {}) => Object.entries(callbacks).reduce((callbackObj, [
   key,
   callback,
-]) => ({
-  ...callbackObj,
-  [key]: async (...args: any[]) => {
-    callback(...args);
-    await tf.nextFrame();
+]) => {
+  if (callback) {
+    return {
+      ...callbackObj,
+      [key]: async (...args: any[]) => {
+        callback(...args);
+        await tf.nextFrame();
+      }
+    };
   }
-}), {});
+
+  return callbackObj;
+}, {});
 
 const train = async ({
   xs,
