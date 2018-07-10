@@ -94,22 +94,18 @@ class MLClassifier {
   }
 
   public train = async (params: IConfigurationParams = {}) => {
-    const combinedParams = {
-      ...this.params,
-      ...params,
-    };
-
     const data = await this.getData('train');
 
     if (!data.xs) {
       throw new Error('You must add some training examples');
     }
 
+    const classes = Object.keys(data.classes).length;
     try {
-      this.model = await train({
-        ...data,
-        classes: Object.keys(data.classes).length,
-      }, combinedParams);
+      this.model = await train(data, classes, {
+        ...this.params,
+        ...params,
+      });
     } catch(err) {
       throw err;
     }

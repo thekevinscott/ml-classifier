@@ -2,15 +2,10 @@ import * as tf from '@tensorflow/tfjs';
 import {
   IParams,
   IParamsCallbacks,
+  ITrainingData,
 } from './types';
 
-interface ITrainingOpts {
-  xs?: tf.Tensor3D;
-  ys?: tf.Tensor2D;
-  classes: number;
-}
-
-const defaultLayers = ({ classes }: ITrainingOpts) => [
+const defaultLayers = (classes: number) => [
   tf.layers.flatten({inputShape: [7, 7, 256]}),
   tf.layers.dense({
     units: 100,
@@ -58,8 +53,7 @@ const transformCallbacks = (callbacks: IParamsCallbacks = {}) => Object.entries(
 const train = async ({
   xs,
   ys,
-  classes,
-}: ITrainingOpts, params: IParams) => {
+}: ITrainingData, classes: number, params: IParams) => {
   if (xs === undefined || ys === undefined) {
     throw new Error('Add some examples before training!');
   }
@@ -67,7 +61,7 @@ const train = async ({
   const layers = params.layers || defaultLayers;
 
   const model = tf.sequential({
-    layers: layers({ xs, ys, classes }),
+    layers: layers({ classes }),
   });
 
   model.compile({
