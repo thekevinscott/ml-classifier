@@ -60,20 +60,15 @@ class MLClassifier {
     });
   });
 
-  private prepareData = async (image: tf.Tensor3D) => {
+  private cropAndActivateImage = async (image: tf.Tensor3D) => {
     await this.loaded();
     const processedImage = await prepareData(image);
     return this.pretrainedModel.predict(processedImage);
   }
 
-  public train = async (images: IImage[], params: IConfigurationParams = {}) => {
-    const combinedParams = {
-      ...this.params,
-      ...params,
-    };
-
+  public addData = async (images: IImage[]) => {
     const activatedImages = await Promise.all(images.map(async (image: IImage) => {
-      const img = await this.prepareData(image.data);
+      const img = await this.cropAndActivateImage(image.data);
       return {
         activation: img,
         label: image.label,
@@ -81,6 +76,17 @@ class MLClassifier {
     }));
 
     this.data = prepareTrainingData(activatedImages);
+  }
+
+  public train = async (params: IConfigurationParams = {}) => {
+    const combinedParams = {
+      ...this.params,
+      ...params,
+    };
+
+    if (!this.data.xs) {
+      throw new Error('You must add some training examples');
+    }
 
     try {
       this.model = await train({
@@ -95,7 +101,7 @@ class MLClassifier {
   public predict = async (data: tf.Tensor3D) => {
     await this.loaded();
     console.assert(this.model, 'You must call train prior to calling predict');
-    const img = await this.prepareData(data);
+    const img = await this.cropAndActivateImage(data);
     // TODO: Do these images need to be activated?
     const predictedClass = tf.tidy(() => {
       const predictions = this.model.predict(img);
@@ -123,7 +129,7 @@ class MLClassifier {
   //   };
 
   //   const activatedImages = await Promise.all(images.map(async (image: IImage) => {
-  //     const img = await this.prepareData(image.data);
+  //     const img = await this.cropAndActivateImage(image.data);
   //     return {
   //       activation: img,
   //       label: image.label,

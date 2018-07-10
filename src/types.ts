@@ -19,6 +19,10 @@ export interface IClasses {
   [index: string]: number;
 }
 
+export interface IData {
+  classes: IClasses;
+}
+
 export interface ITrainingData {
   classes: IClasses;
   xs?: tf.Tensor3D;
