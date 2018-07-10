@@ -165,7 +165,7 @@ class MLClassifier {
       throw new Error('You must call train prior to calling save');
     }
 
-    return await this.model.save(handlerOrURL || getDefaultDownloadHandler(this.data));
+    return await this.model.save(handlerOrURL || getDefaultDownloadHandler(this.data.classes));
   }
 }
 export default MLClassifier;

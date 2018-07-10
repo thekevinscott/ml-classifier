@@ -12,35 +12,29 @@ jest.mock('haikunator', () => {
 
 describe('getDefaultDownloadHandler', () => {
   test('it returns a url with downloads as the first argument', () => {
-    expect(getDefaultDownloadHandler({ classes: {}}).indexOf('downloads://')).toEqual(0);
+    expect(getDefaultDownloadHandler({}).indexOf('downloads://')).toEqual(0);
   });
 
   test('it returns a name for a single class', () => {
     expect(getName({
-      classes: {
-        'foo': 0,
-      },
+      foo: 0,
     })).toEqual('foo');
   });
 
   test('it returns a name for multiple classes up to 3', () => {
     expect(getName({
-      classes: {
-        foo: 0,
-        baz: 2,
-        bar: 1,
-      },
+      foo: 0,
+      baz: 2,
+      bar: 1,
     })).toEqual('foo-bar-baz');
   });
 
   test('it returns a random name for classes greater than 3', () => {
     expect(getName({
-      classes: {
-        foo: 0,
-        baz: 2,
-        bar: 1,
-        quom: 3,
-      },
+      foo: 0,
+      baz: 2,
+      bar: 1,
+      quom: 3,
     })).toEqual('haikunate');
   });
 });

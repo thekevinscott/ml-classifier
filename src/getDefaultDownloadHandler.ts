@@ -1,5 +1,4 @@
 import {
-  ITrainingData,
   IClasses,
 } from './types';
 
@@ -11,17 +10,17 @@ const getOrderedClasses = (classes: IClasses) => Object.entries(classes).sort((a
   return a[1] - b[1];
 }).map(([key]) => key);
 
-export const getName = (data: ITrainingData) => {
-  const classes = getOrderedClasses(data.classes);
-  if (classes.length < 4) {
-    return classes.join('-');
+export const getName = (classes: IClasses) => {
+  const orderedClasses = getOrderedClasses(classes);
+  if (orderedClasses.length < 4) {
+    return orderedClasses.join('-');
   }
 
   return haikunator.haikunate();
 };
 
-const getDefaultDownloadHandler = (data: ITrainingData) => {
-  return `downloads://ml-classifier-${getName(data)}`;
+const getDefaultDownloadHandler = (classes: IClasses) => {
+  return `downloads://ml-classifier-${getName(classes)}`;
 };
 
 export default getDefaultDownloadHandler;
