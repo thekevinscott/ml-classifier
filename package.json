@@ -1,6 +1,6 @@
 {
   "name": "ml-classifier",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A machine learning engine for quickly training image classification models in your browser",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

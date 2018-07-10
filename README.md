@@ -83,7 +83,8 @@ mlClassifier.addData(images, labels, DataType.TRAIN);
 * **dataType** (`DataType`) *Optional* - an enum specifying which data type the images match. Data types can be `DataType.TRAIN` for data used in `model.train()`, and `DataType.EVAL`, for data used in `model.evaluate()`. If no argument is supplied, `dataType` will default to `DataType.TRAIN`.
 
 #### Returns
-`null`
+
+Nothing.
 
 ### `train`
 
@@ -220,8 +221,6 @@ You can start up a local copy of `ml-classifier` with:
 ```
 yarn watch
 ```
-
-### clearData
 
 `ml-classifier` is written in Typescript.
 
