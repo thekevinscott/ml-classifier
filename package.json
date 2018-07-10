@@ -4,6 +4,7 @@
   "description": "A package for creating image-based machine learning models",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "repository": "https://github.com/thekevinscott/ml-classifier",
   "scripts": {
     "clean": "rimraf dist/*",
     "watch": "npm run build -- --watch",
