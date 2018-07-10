@@ -11,8 +11,6 @@ import {
 } from './prepareTrainingData';
 import getDefaultDownloadHandler from './getDefaultDownloadHandler';
 
-console.log('i am the ml classifier v2');
-
 import {
   IParams,
   // IConfigurationParams,
@@ -172,7 +170,6 @@ class MLClassifier {
   public save = async(handlerOrURL?: string) => {
     await this.loaded();
     if (!this.model) {
-      console.log('hello!');
       throw new Error('You must call train prior to calling save');
     }
 
