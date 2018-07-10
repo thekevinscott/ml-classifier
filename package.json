@@ -62,7 +62,6 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
-    "@tensorflow/tfjs-node": "^0.1.7",
     "haikunator": "^2.0.0"
   }
 }
