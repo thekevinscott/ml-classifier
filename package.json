@@ -36,13 +36,13 @@
     "@tensorflow/tfjs": "^0.11.7"
   },
   "devDependencies": {
-    "@tensorflow/tfjs": "^0.11.7",
     "@babel/core": "^7.0.0-beta.51",
     "@babel/plugin-proposal-decorators": "^7.0.0-beta.51",
     "@babel/plugin-transform-classes": "^7.0.0-beta.51",
     "@babel/preset-env": "^7.0.0-beta.51",
     "@babel/preset-stage-0": "^7.0.0-beta.51",
     "@babel/preset-typescript": "^7.0.0-beta.51",
+    "@tensorflow/tfjs": "^0.11.7",
     "@types/jest": "^23.1.1",
     "@types/node": "^10.3.4",
     "babel-core": "^7.0.0-0",
@@ -61,6 +61,7 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
+    "@tensorflow/tfjs-node": "^0.1.7",
     "haikunator": "^2.0.0"
   }
 }

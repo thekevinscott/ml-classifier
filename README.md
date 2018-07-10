@@ -104,8 +104,6 @@ mlClassifer.train([{
 
 Any parameters provided will take precedence over parameters provided to the constructor.
 
-`train` returns itself to allow for chaining.
-
 ## `evaluate`
 `evaluate` accepts an array of images and an optional set of parameters.
 
@@ -132,4 +130,14 @@ ml.save(handlerOrURL?);
 
 `save` accepts a `handlerOrURL` argument which can be a string or an `io.IOHandler`.
 
-`save` returns itself, and is chainable.
+# Build
+
+```
+yarn watch
+```
+
+# Tests
+
+```
+yarn test
+```

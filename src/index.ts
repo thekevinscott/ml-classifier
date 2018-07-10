@@ -7,6 +7,8 @@ import loadPretrainedModel, {
 import prepareTrainingData from './prepareTrainingData';
 import getDefaultDownloadHandler from './getDefaultDownloadHandler';
 
+console.log('i am the ml classifier v2');
+
 import {
   IImage,
   IConfigurationParams,
@@ -46,6 +48,7 @@ class MLClassifier {
   }
 
   public getModel = () => this.model;
+  public getParams = () => this.params;
 
   private loaded = async () => new Promise(resolve => {
     if (this.pretrainedModel) {
@@ -87,8 +90,6 @@ class MLClassifier {
     } catch(err) {
       throw err;
     }
-
-    return this;
   }
 
   public predict = async (data: tf.Tensor3D) => {
@@ -151,13 +152,14 @@ class MLClassifier {
   // }
 
   // handlerOrURL?: tf.io.IOHandler | string;
-  public save = async(handlerOrURL: string = getDefaultDownloadHandler(this.data)) => {
+  public save = async(handlerOrURL?: string) => {
     await this.loaded();
-    console.assert(this.model, 'You must call train prior to calling save');
+    if (!this.model) {
+      console.log('hello!');
+      throw new Error('You must call train prior to calling save');
+    }
 
-    await this.model.save(handlerOrURL);
-
-    return this;
+    return await this.model.save(handlerOrURL || getDefaultDownloadHandler(this.data));
   }
 }
 export default MLClassifier;

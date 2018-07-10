@@ -6,8 +6,12 @@ const Haikunator = require('haikunator');
 
 const haikunator = new Haikunator();
 
-const getName = (data: ITrainingData) => {
-  const classes = Object.keys(data.classes);
+const getOrderedClasses = classes => Object.entries(classes).sort((a, b) => {
+  return a[1] - b[1];
+}).map(([key]) => key);
+
+export const getName = (data: ITrainingData) => {
+  const classes = getOrderedClasses(data.classes);
   if (classes.length < 4) {
     return classes.join('-');
   }
