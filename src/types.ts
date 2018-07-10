@@ -15,10 +15,12 @@ export interface IActivatedImage {
   label: string;
 };
 
+export interface IClasses {
+  [index: string]: number;
+}
+
 export interface ITrainingData {
-  classes: {
-    [index: string]: number;
-  };
+  classes: IClasses;
   xs?: tf.Tensor3D;
   ys?: tf.Tensor2D;
 }

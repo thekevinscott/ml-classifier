@@ -1,12 +1,13 @@
 import {
   ITrainingData,
+  IClasses,
 } from './types';
 
 const Haikunator = require('haikunator');
 
 const haikunator = new Haikunator();
 
-const getOrderedClasses = classes => Object.entries(classes).sort((a, b) => {
+const getOrderedClasses = (classes: IClasses) => Object.entries(classes).sort((a, b) => {
   return a[1] - b[1];
 }).map(([key]) => key);
 
