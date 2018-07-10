@@ -21,9 +21,20 @@ export interface IClasses {
 
 export interface IData {
   classes: IClasses;
+  train: ITrainingData;
 }
 
 export interface ITrainingData {
+  xs?: tf.Tensor3D;
+  ys?: tf.Tensor2D;
+}
+
+export interface IPreparedData {
+  xs?: tf.Tensor3D;
+  ys?: tf.Tensor2D;
+}
+
+export interface ICollectedData {
   classes: IClasses;
   xs?: tf.Tensor3D;
   ys?: tf.Tensor2D;

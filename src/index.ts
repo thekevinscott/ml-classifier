@@ -1,5 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import prepareData from './prepareData';
+import getClasses from './getClasses';
 import train from './train';
 import loadPretrainedModel, {
   PRETRAINED_MODELS_KEYS,
@@ -13,7 +14,8 @@ import {
   IImage,
   IConfigurationParams,
   IParams,
-  ITrainingData,
+  IData,
+  ICollectedData,
 } from './types';
 
 const defaultParams = {
@@ -29,7 +31,7 @@ class MLClassifier {
   private pretrainedModel: any;
   private model: tf.Sequential;
   private callbacks: Function[] = [];
-  private data: ITrainingData;
+  private data: IData;
   public tf = tf;
 
   constructor(params: IConfigurationParams = {}) {
@@ -75,7 +77,20 @@ class MLClassifier {
       };
     }));
 
-    this.data = prepareTrainingData(activatedImages);
+    this.data.classes = getClasses(images);
+    this.data.train = prepareTrainingData(activatedImages, this.data.classes);
+  }
+
+  private getData = async (dataType: string): Promise<ICollectedData> => {
+    if (!this.data[dataType]) {
+      throw new Error(`Datatype ${dataType} unsupported`);
+    }
+
+    return {
+      xs: this.data[dataType].xs,
+      ys: this.data[dataType].ys,
+      classes: this.data.classes,
+    };
   }
 
   public train = async (params: IConfigurationParams = {}) => {
@@ -84,14 +99,16 @@ class MLClassifier {
       ...params,
     };
 
-    if (!this.data.xs) {
+    const data = await this.getData('train');
+
+    if (!data.xs) {
       throw new Error('You must add some training examples');
     }
 
     try {
       this.model = await train({
-        ...this.data,
-        classes: Object.keys(this.data.classes).length,
+        ...data,
+        classes: Object.keys(data.classes).length,
       }, combinedParams);
     } catch(err) {
       throw err;

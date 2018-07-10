@@ -1,17 +1,18 @@
 import * as tf from '@tensorflow/tfjs';
-import getClasses from './getClasses';
 
 import {
+  IPreparedData,
   ITrainingData,
   IActivatedImage,
+  IClasses,
 } from './types';
 
 const oneHot = (labelIndex: number, classLength: number) => tf.tidy(() => tf.oneHot(tf.tensor1d([labelIndex]).toInt(), classLength));
 
-const prepareTrainingData = (images: IActivatedImage[]): ITrainingData => {
+const prepareTrainingData = (images: IActivatedImage[], classes: IClasses): IPreparedData => {
+  const classLength = Object.keys(classes).length;
   return images.reduce((data: ITrainingData, { activation, label }: IActivatedImage) => {
-    const labelIndex = data.classes[label];
-    const classLength = Object.keys(data.classes).length;
+    const labelIndex = classes[label];
     const y = oneHot(labelIndex, classLength);
 
     return tf.tidy(() => {
@@ -39,9 +40,7 @@ const prepareTrainingData = (images: IActivatedImage[]): ITrainingData => {
         ys,
       };
     });
-  }, {
-    classes: getClasses(images),
-  });
+  }, { });
 };
 
 export default prepareTrainingData;
