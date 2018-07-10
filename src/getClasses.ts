@@ -1,9 +1,4 @@
-import {
-  IImage,
-  IActivatedImage,
-} from './types';
-
-const getClasses = (images: (IImage | IActivatedImage)[]) => images.reduce((labels, { label }) => {
+const getClasses = (classes: string[]) => classes.reduce((labels, label) => {
   if (labels[label] !== undefined) {
     return labels;
   }

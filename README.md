@@ -82,6 +82,16 @@ mlClassifier.save();
 
 Accepts a configuration object as specified in configuration. This configuration object, or `params`, will be persisted for the lifetime of `MLClassifier`.
 
+## `addData`
+
+This method takes an array of incoming images, an optional array of labels, and an optional dataType.
+
+If `dataType` is not supplied, `train` is set.
+
+labels are mandatory if the `dataType` is `train`.
+
+`addData` will take the incoming images, crop each one, expand their dimensions, and cast to a float representing the pixel value. It will then run each image through the preloaded model to get an activation.
+
 ## `train`
 
 Used to kick off the classifier training.

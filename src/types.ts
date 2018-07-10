@@ -5,31 +5,20 @@ enum ModelLoggingVerbosity {
   VERBOSE = 1
 }
 
-export interface IImage {
-  label: string;
-  data: tf.Tensor3D;
-}
-
-export interface IActivatedImage {
-  activation: tf.Tensor3D;
-  label: string;
-};
-
 export interface IClasses {
   [index: string]: number;
 }
 
+export enum DataType {
+  TRAIN = "train",
+  EVAL = "eval",
+};
 export interface IData {
   classes: IClasses;
-  train: ITrainingData;
+  [index: string]: IImageData;
 }
 
-export interface ITrainingData {
-  xs?: tf.Tensor3D;
-  ys?: tf.Tensor2D;
-}
-
-export interface IPreparedData {
+export interface IImageData {
   xs?: tf.Tensor3D;
   ys?: tf.Tensor2D;
 }

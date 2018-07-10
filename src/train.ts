@@ -2,24 +2,27 @@ import * as tf from '@tensorflow/tfjs';
 import {
   IParams,
   IParamsCallbacks,
-  ITrainingData,
+  IImageData,
 } from './types';
 
-const defaultLayers = (classes: number) => [
-  tf.layers.flatten({inputShape: [7, 7, 256]}),
-  tf.layers.dense({
-    units: 100,
-    activation: 'relu',
-    kernelInitializer: 'varianceScaling',
-    useBias: true
-  }),
-  tf.layers.dense({
-    units: classes,
-    kernelInitializer: 'varianceScaling',
-    useBias: false,
-    activation: 'softmax'
-  })
-];
+const defaultLayers = ({ classes }: { classes: number }) => {
+  console.log('classes', classes);
+  return [
+    tf.layers.flatten({inputShape: [7, 7, 256]}),
+    tf.layers.dense({
+      units: 100,
+      activation: 'relu',
+      kernelInitializer: 'varianceScaling',
+      useBias: true
+    }),
+    tf.layers.dense({
+      units: classes,
+      kernelInitializer: 'varianceScaling',
+      useBias: false,
+      activation: 'softmax'
+    })
+  ];
+};
 
 const getBatchSize = (params: IParams, xs?: tf.Tensor3D) => {
   if (params.batchSize) {
@@ -53,7 +56,7 @@ const transformCallbacks = (callbacks: IParamsCallbacks = {}) => Object.entries(
 const train = async ({
   xs,
   ys,
-}: ITrainingData, classes: number, params: IParams) => {
+}: IImageData, classes: number, params: IParams) => {
   if (xs === undefined || ys === undefined) {
     throw new Error('Add some examples before training!');
   }
@@ -72,7 +75,7 @@ const train = async ({
 
   const batchSize = getBatchSize(params, xs);
 
-  await model.fit(
+  const history = await model.fit(
     xs,
     ys,
     {
@@ -98,7 +101,10 @@ const train = async ({
     },
   );
 
-  return model;
+  return {
+    model,
+    history,
+  };
 };
 
 export default train;

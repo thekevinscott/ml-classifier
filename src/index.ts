@@ -1,21 +1,24 @@
 import * as tf from '@tensorflow/tfjs';
-import prepareData from './prepareData';
+import cropAndResizeImage from './cropAndResizeImage';
 import getClasses from './getClasses';
 import train from './train';
 import loadPretrainedModel, {
   PRETRAINED_MODELS_KEYS,
 } from './loadPretrainedModel';
-import prepareTrainingData from './prepareTrainingData';
+import {
+  addData,
+  addLabels,
+} from './prepareTrainingData';
 import getDefaultDownloadHandler from './getDefaultDownloadHandler';
 
 console.log('i am the ml classifier v2');
 
 import {
-  IImage,
   IConfigurationParams,
   IParams,
   IData,
   ICollectedData,
+  DataType,
 } from './types';
 
 const defaultParams = {
@@ -25,13 +28,17 @@ const defaultParams = {
   callbacks: {},
 };
 
+export { DataType } from './types';;
+
 class MLClassifier {
   private params: IParams;
   // private pretrainedModel: typeof tf.model;
   private pretrainedModel: any;
   private model: tf.Sequential;
   private callbacks: Function[] = [];
-  private data: IData;
+  private data: IData = {
+    classes: {},
+  };
   public tf = tf;
 
   constructor(params: IConfigurationParams = {}) {
@@ -64,24 +71,58 @@ class MLClassifier {
 
   private cropAndActivateImage = async (image: tf.Tensor3D) => {
     await this.loaded();
-    const processedImage = await prepareData(image);
+    const processedImage = await cropAndResizeImage(image);
     return this.pretrainedModel.predict(processedImage);
   }
 
-  public addData = async (images: IImage[]) => {
-    const activatedImages = await Promise.all(images.map(async (image: IImage) => {
-      const img = await this.cropAndActivateImage(image.data);
-      return {
-        activation: img,
-        label: image.label,
-      };
-    }));
+  public addData = async (images: tf.Tensor3D[], labels?: string[], dataType?: DataType) => {
+    if (!dataType) {
+      if (typeof labels === 'string') {
+        dataType = labels;
+      } else {
+        dataType = DataType.TRAIN;
+      }
+    }
 
-    this.data.classes = getClasses(images);
-    this.data.train = prepareTrainingData(activatedImages, this.data.classes);
+    if (dataType === DataType.TRAIN || dataType === DataType.EVAL) {
+      if (!labels) {
+        throw new Error(`You must provide labels when supplying ${dataType} data`);
+      }
+
+      const activatedImages = await Promise.all(images.map(async (image: tf.Tensor3D, idx: number) => {
+        return await this.cropAndActivateImage(image);
+      }));
+
+      this.data.classes = getClasses(labels);
+      const xs = addData(activatedImages);
+      const ys = addLabels(labels, this.data.classes);
+      this.data[dataType] = {
+        xs,
+        ys,
+      };
+    } else if (dataType === DataType.EVAL) {
+      const activatedImages = await Promise.all(images.map(async (image: tf.Tensor3D, idx: number) => {
+        return await this.cropAndActivateImage(image);
+      }));
+
+      const xs = addData(activatedImages);
+
+      this.data[dataType] = {
+        xs,
+      };
+    }
   }
 
-  private getData = async (dataType: string): Promise<ICollectedData> => {
+  public clearData = async (dataType?: DataType) => {
+    if (dataType) {
+      this.data[dataType] = { };
+    }
+
+    this.data[DataType.TRAIN] = {};
+    this.data[DataType.EVAL] = {};
+  }
+
+  private getData = async (dataType: DataType): Promise<ICollectedData> => {
     if (!this.data[dataType]) {
       throw new Error(`Datatype ${dataType} unsupported`);
     }
@@ -94,26 +135,31 @@ class MLClassifier {
   }
 
   public train = async (params: IConfigurationParams = {}) => {
-    const data = await this.getData('train');
+    await this.loaded();
+    const data = await this.getData(DataType.TRAIN);
 
     if (!data.xs) {
       throw new Error('You must add some training examples');
     }
 
     const classes = Object.keys(data.classes).length;
-    try {
-      this.model = await train(data, classes, {
-        ...this.params,
-        ...params,
-      });
-    } catch(err) {
-      throw err;
-    }
+    const {
+      model,
+      history,
+    } = await train(data, classes, {
+      ...this.params,
+      ...params,
+    });
+
+    this.model = model;
+    return history;
   }
 
   public predict = async (data: tf.Tensor3D) => {
     await this.loaded();
-    console.assert(this.model, 'You must call train prior to calling predict');
+    if (!this.model) {
+      throw new Error('You must call train prior to calling predict');
+    }
     const img = await this.cropAndActivateImage(data);
     // TODO: Do these images need to be activated?
     const predictedClass = tf.tidy(() => {
@@ -133,42 +179,29 @@ class MLClassifier {
     }), {})[classId];
   }
 
-  // public evaluate = async (images: IImage[], params: IConfigurationParams = {}) => {
-  //   await this.loaded();
-  //   console.assert(this.model, 'You must call train prior to calling evaluate');
-  //   const combinedParams = {
-  //     ...this.params,
-  //     ...params,
-  //   };
+  public evaluate = async (params: IConfigurationParams = {}) => {
+    await this.loaded();
+    if (!this.model) {
+      throw new Error('You must call train prior to calling predict');
+    }
+    const data = await this.getData(DataType.EVAL);
 
-  //   const activatedImages = await Promise.all(images.map(async (image: IImage) => {
-  //     const img = await this.cropAndActivateImage(image.data);
-  //     return {
-  //       activation: img,
-  //       label: image.label,
-  //     };
-  //   }));
+    if (!data.xs || !data.ys) {
+      throw new Error('You must add some evaluation examples');
+    }
 
-  //   const {
-  //     xs,
-  //     ys,
-  //   } = prepareTrainingData(activatedImages);
+    const combinedParams = {
+        ...this.params,
+        ...params,
+    };
 
-  //   if (xs !== undefined && ys !== undefined) {
-  //     console.assert(this.model, 'You must call train prior to calling save');
-  //     return await this.model.evaluate({
-  //       xs,
-  //       ys,
-  //     }, {
-  //       batchSize: combinedParams.batchSize,
-  //       verbose: combinedParams.verbose,
-  //       sampleWeight: combinedParams.sampleWeight,
-  //       steps: combinedParams.steps,
-  //     });
-  //   }
-
-  //   return this;
-  // }
+    return await this.model.evaluate(data.xs, data.ys, {
+      batchSize: combinedParams.batchSize,
+      verbose: combinedParams.verbose,
+      sampleWeight: combinedParams.sampleWeight,
+      steps: combinedParams.steps,
+    });
+  }
 
   // handlerOrURL?: tf.io.IOHandler | string;
   public save = async(handlerOrURL?: string) => {

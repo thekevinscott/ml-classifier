@@ -1,46 +1,48 @@
 import * as tf from '@tensorflow/tfjs';
 
 import {
-  IPreparedData,
-  ITrainingData,
-  IActivatedImage,
   IClasses,
 } from './types';
 
 const oneHot = (labelIndex: number, classLength: number) => tf.tidy(() => tf.oneHot(tf.tensor1d([labelIndex]).toInt(), classLength));
 
-const prepareTrainingData = (images: IActivatedImage[], classes: IClasses): IPreparedData => {
+// const turnTensorArrayIntoTensor = (tensors: tf.Tensor[]) => tensors.reduce((data?: tf.Tensor, tensor: tf.Tensor) => tf.tidy(() => {
+//   if (data === undefined) {
+//     return tf.keep(tensor);
+//   }
+
+//   const newData = tf.keep(data.concat(tensor, 0));
+//   data.dispose();
+//   return newData;
+// }), undefined);
+
+export const addData = (tensors: tf.Tensor3D[]): tf.Tensor3D => {
+  const data = tf.keep(tensors[0]);
+  return tensors.slice(1).reduce((data: tf.Tensor3D, tensor: tf.Tensor3D) => tf.tidy(() => {
+    const newData = tf.keep(data.concat(tensor, 0));
+    data.dispose();
+    return newData;
+  }), data);
+};
+
+export const addLabels = (labels: string[], classes: IClasses): tf.Tensor2D | undefined => {
   const classLength = Object.keys(classes).length;
-  return images.reduce((data: ITrainingData, { activation, label }: IActivatedImage) => {
+  return labels.reduce((data: tf.Tensor2D | undefined, label: string) => {
     const labelIndex = classes[label];
     const y = oneHot(labelIndex, classLength);
 
     return tf.tidy(() => {
-      if (data.xs === undefined || data.ys === undefined) {
-        return {
-          ...data,
-          xs: tf.keep(activation),
-          ys: tf.keep(y),
-        };
+      if (data === undefined) {
+        return tf.keep(y);
       }
 
-      const oldX = data.xs;
-      const oldY = data.ys;
+      const old = data;
+      const ys = tf.keep(old.concat(y, 0));
 
-      const xs = tf.keep(oldX.concat(activation, 0));
-      const ys = tf.keep(oldY.concat(y, 0));
-
-      oldX.dispose();
-      oldY.dispose();
+      old.dispose();
       y.dispose();
 
-      return {
-        ...data,
-        xs,
-        ys,
-      };
+      return ys;
     });
-  }, { });
+  }, undefined);
 };
-
-export default prepareTrainingData;
