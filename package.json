@@ -1,6 +1,6 @@
 {
   "name": "ml-classifier",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A machine learning engine for quickly training image classification models in your browser",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -16,7 +16,7 @@
     "tensorflowjs"
   ],
   "author": "Kevin Scott",
-  "license": "ISC",
+  "license": "MIT",
   "jest": {
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.(j|t)s?(x)",
