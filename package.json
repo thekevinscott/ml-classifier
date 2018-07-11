@@ -1,6 +1,6 @@
 {
   "name": "ml-classifier",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "A machine learning engine for quickly training image classification models in your browser",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -8,7 +8,7 @@
   "scripts": {
     "clean": "rimraf dist/*",
     "watch": "npm run build -- --watch",
-    "build": "npm run clean && tsc --project tsconfig.json",
+    "make": "npm run clean && rollup -c",
     "prepublish": "npm run build",
     "test": "jest"
   },
@@ -19,6 +19,7 @@
   "license": "MIT",
   "jest": {
     "testMatch": [
+      "<rootDir>__tests__/**/*.(j|t)s?(x)",
       "<rootDir>/src/**/__tests__/**/*.(j|t)s?(x)",
       "<rootDir>/src/**/?(*.)(spec|test).(j|t)s?(x)"
     ],
@@ -56,12 +57,13 @@
     "jest": "22.4.2",
     "regenerator-runtime": "^0.12.0",
     "rimraf": "^2.6.2",
+    "rollup": "^0.62.0",
+    "rollup-plugin-typescript2": "^0.15.1",
     "ts-jest": "22.0.1",
     "ts-loader": "^2.3.7",
     "tslint": "^5.7.0",
     "tslint-config-prettier": "^1.10.0",
     "typescript": "^2.9.2"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }

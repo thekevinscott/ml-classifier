@@ -72,11 +72,13 @@ class MLClassifier {
   public getModel = () => this.model;
 
   public addData = async (images: tf.Tensor3D[], labels: string[], dataType: DataType = DataType.TRAIN) => {
+    if (!images) {
+      throw new Error('You must supply images');
+    }
+    if (!labels) {
+      throw new Error('You must supply labels');
+    }
     if (dataType === DataType.TRAIN || dataType === DataType.EVAL) {
-      if (!labels) {
-        throw new Error(`You must provide labels when supplying ${dataType} data`);
-      }
-
       const activatedImages = await Promise.all(images.map(async (image: tf.Tensor3D, idx: number) => {
         return await this.cropAndActivateImage(image);
       }));
