@@ -10,6 +10,12 @@ export default {
   },
   plugins: [
     typescript({
+      tsconfig: 'tsconfig.json',
+      verbosity: 1,
+      exclude: [
+        '*.d.ts',
+        '**/*.d.ts',
+      ],
     }),
   ],
 };

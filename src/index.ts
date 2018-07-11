@@ -24,7 +24,8 @@ export { DataType } from './types';
 class MLClassifier {
   // private pretrainedModel: typeof tf.model;
   private pretrainedModel: any;
-  private model: tf.Sequential;
+  // private model: tf.Sequential;
+  private model: any;
   private callbacks: Function[] = [];
   private data: IData = {
     classes: {},
@@ -178,4 +179,5 @@ class MLClassifier {
     return await this.model.save(handlerOrURL || getDefaultDownloadHandler(this.data.classes));
   }
 }
+
 export default MLClassifier;
