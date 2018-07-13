@@ -42,6 +42,8 @@ const train = async ({
     throw new Error('Add some examples before training!');
   }
 
+  // const batch = data.nextTrainBatch(BATCH_SIZE);
+
   const model = tf.sequential({
     layers: defaultLayers({ classes }),
   });

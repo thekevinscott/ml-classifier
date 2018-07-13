@@ -1,6 +1,6 @@
 {
   "name": "ml-classifier",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "A machine learning engine for quickly training image classification models in your browser",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -62,7 +62,7 @@
     "ts-loader": "^2.3.7",
     "tslint": "^5.7.0",
     "tslint-config-prettier": "^1.10.0",
-    "typescript": "^2.9.2"
+    "typescript": "3.0.0-rc"
   },
   "dependencies": {}
 }

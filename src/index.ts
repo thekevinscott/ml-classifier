@@ -78,8 +78,10 @@ class MLClassifier {
     if (!labels) {
       throw new Error('You must supply labels');
     }
+
     if (dataType === DataType.TRAIN || dataType === DataType.EVAL) {
       const activatedImages = await Promise.all(images.map(async (image: tf.Tensor3D, idx: number) => {
+        await tf.nextFrame();
         return await this.cropAndActivateImage(image);
       }));
 
@@ -89,16 +91,6 @@ class MLClassifier {
       this.data[dataType] = {
         xs,
         ys,
-      };
-    } else if (dataType === DataType.EVAL) {
-      const activatedImages = await Promise.all(images.map(async (image: tf.Tensor3D, idx: number) => {
-        return await this.cropAndActivateImage(image);
-      }));
-
-      const xs = addData(activatedImages);
-
-      this.data[dataType] = {
-        xs,
       };
     }
   }
