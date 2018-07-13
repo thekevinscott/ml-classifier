@@ -30,7 +30,6 @@ class MLClassifier {
   private data: IData = {
     classes: {},
   };
-  public tf = tf;
 
   constructor() {
     this.init();
@@ -170,13 +169,13 @@ class MLClassifier {
   }
 
   // handlerOrURL?: tf.io.IOHandler | string;
-  public save = async(handlerOrURL?: string) => {
+  public save = async(handlerOrURL?: string, params: IParams = {}) => {
     await this.loaded();
     if (!this.model) {
       throw new Error('You must call train prior to calling save');
     }
 
-    return await this.model.save(handlerOrURL || getDefaultDownloadHandler(this.data.classes));
+    return await this.model.save(handlerOrURL || getDefaultDownloadHandler(this.data.classes), params);
   }
 }
 

@@ -2,6 +2,8 @@
 
 ML Classifier is a machine learning engine for quickly training image classification models in your browser. Models can be saved with a single command, and the resulting models reused to make image classification predictions.
 
+This package is intended as a companion for [`ml-classifier-ui`](https://github.com/thekevinscott/ml-classifier-ui), which provides a web frontend in React for uploading data and seeing results.
+
 ## Getting Started
 
 ### Installation
@@ -171,6 +173,8 @@ mlClassifier.save(('path-to-save');
 #### Parameters
 
 * **handlerOrUrl** (`io.IOHandler | string`) *Optional* - an argument to be passed to `model.save`. If omitted, the model's unique labels will be concatenated together in the form of `class1-class2-class3`.
+* **params** (`Object`) *Optional* - a set of parameters that will be passed directly to `model.save`. [View the Tensorflow.JS docs](https://js.tensorflow.org/api/0.12.0/#tf.Model.save) for an up-to-date list of arguments.
+
 
 ## `getModel`
 

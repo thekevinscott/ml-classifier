@@ -1,6 +1,6 @@
 {
   "name": "ml-classifier",
-  "version": "0.3.1",
+  "version": "0.3.3",
   "description": "A machine learning engine for quickly training image classification models in your browser",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -9,7 +9,6 @@
     "clean": "rimraf dist/*",
     "watch": "npm run build -- --watch",
     "build": "npm run clean && rollup -c",
-    "publish": "npm run build && npm publish",
     "test": "jest"
   },
   "keywords": [
