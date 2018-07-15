@@ -1,6 +1,6 @@
 {
   "name": "ml-classifier",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "A machine learning engine for quickly training image classification models in your browser",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -12,7 +12,12 @@
     "test": "jest"
   },
   "keywords": [
-    "tensorflowjs"
+    "tensorflowjs",
+    "artificial intelligence",
+    "machine learning",
+    "deep learning",
+    "image classification",
+    "tensorflow"
   ],
   "author": "Kevin Scott",
   "license": "MIT",
@@ -35,7 +40,7 @@
     ]
   },
   "peerDependencies": {
-    "@tensorflow/tfjs": "^0.11.7"
+    "@tensorflow/tfjs": "^0.12.2"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.51",
@@ -44,7 +49,7 @@
     "@babel/preset-env": "^7.0.0-beta.51",
     "@babel/preset-stage-0": "^7.0.0-beta.51",
     "@babel/preset-typescript": "^7.0.0-beta.51",
-    "@tensorflow/tfjs": "^0.11.7",
+    "@tensorflow/tfjs": "^0.12.2",
     "@types/jest": "^23.1.1",
     "@types/node": "^10.3.4",
     "babel-core": "^7.0.0-0",
