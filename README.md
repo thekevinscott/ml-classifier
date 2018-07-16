@@ -75,14 +75,14 @@ This method takes an array of incoming images, an optional array of labels, and 
 
 ```
 import MLClassifier, { DataType } from 'ml-classifier';
-mlClassifier.addData(images, labels, DataType.TRAIN);
+mlClassifier.addData(images, labels, 'train');
 ```
 
 #### Parameters
 
 * **images** (`Tensor3D[]`) - an array of 3D tensors. Images can be any sizes, but will be cropped and sized down to match the pretrained model.
 * **labels** (`string[]`) - an array of strings, matching the images passed above.
-* **dataType** (`DataType`) *Optional* - an enum specifying which data type the images match. Data types can be `DataType.TRAIN` for data used in `model.train()`, and `DataType.EVAL`, for data used in `model.evaluate()`. If no argument is supplied, `dataType` will default to `DataType.TRAIN`.
+* **dataType** (`string`) *Optional* - an enum specifying which data type the images match. Data types can be `train` for data used in `model.train()`, and `eval`, for data used in `model.evaluate()`. If no argument is supplied, `dataType` will default to `train`.
 
 #### Returns
 
