@@ -2,6 +2,7 @@ import * as tf from '@tensorflow/tfjs';
 import cropAndResizeImage from './cropAndResizeImage';
 import getClasses from './getClasses';
 import train from './train';
+import translateImages from './translateImages';
 import loadPretrainedModel, {
   PRETRAINED_MODELS_KEYS,
 } from './loadPretrainedModel';
@@ -58,7 +59,7 @@ class MLClassifier {
   }
 
   private getData = async (dataType: string): Promise<ICollectedData> => {
-    if (dataType !== 'train' || dataType !== 'eval') {
+    if (dataType !== 'train' && dataType !== 'eval') {
       throw new Error(`Datatype ${dataType} unsupported`);
     }
 

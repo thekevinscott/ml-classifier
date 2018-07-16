@@ -1,3 +1,5 @@
+import * as tf from '@tensorflow/tfjs';
+
 const loadImage = async (src: string) => new Promise<HTMLImageElement>((resolve, reject) => {
   const image = new Image();
   image.src = src;
@@ -14,7 +16,7 @@ const translateImages = async (origImages: Array<tf.Tensor3D | HTMLImageElement 
     if (typeof image === 'string') {
       const loadedImage = await loadImage(image);
       image = tf.fromPixels(loadedImage);
-    } else if (image.src) {
+    } else if (image instanceof HTMLImageElement) {
       const loadedImage = await loadImage(image.src);
       image = tf.fromPixels(loadedImage);
     }
@@ -26,4 +28,4 @@ const translateImages = async (origImages: Array<tf.Tensor3D | HTMLImageElement 
   return images;
 }
 
-export translateImages;
+export default translateImages;
