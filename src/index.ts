@@ -125,11 +125,12 @@ class MLClassifier {
     return history;
   }
 
-  public predict = async (data: tf.Tensor3D) => {
+  public predict = async (orig: tf.Tensor3D | HTMLImageElement | string) => {
     await this.loaded();
     if (!this.model) {
       throw new Error('You must call train prior to calling predict');
     }
+    const data = await translateImages([orig])[0];
     const img = await this.cropAndActivateImage(data);
     // TODO: Do these images need to be activated?
     const predictedClass = tf.tidy(() => {
