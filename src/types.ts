@@ -4,10 +4,10 @@ export interface IClasses {
   [index: string]: number;
 }
 
-export enum DataType {
-  TRAIN = "train",
-  EVAL = "eval",
-};
+// export enum DataType {
+//   TRAIN = "train",
+//   EVAL = "eval",
+// };
 export interface IData {
   classes: IClasses;
   [index: string]: IImageData;
