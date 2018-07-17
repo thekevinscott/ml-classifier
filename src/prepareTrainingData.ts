@@ -27,6 +27,10 @@ export const addData = (tensors: tf.Tensor3D[]): tf.Tensor3D => {
 
 export const addLabels = (labels: string[], classes: IClasses): tf.Tensor2D | undefined => {
   const classLength = Object.keys(classes).length;
+  if (classLength <= 1) {
+    throw new Error('You must provide more than 1 class for training');
+  }
+
   return labels.reduce((data: tf.Tensor2D | undefined, label: string) => {
     const labelIndex = classes[label];
     const y = oneHot(labelIndex, classLength);

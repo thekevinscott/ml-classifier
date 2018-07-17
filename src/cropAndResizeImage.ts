@@ -10,7 +10,7 @@ const crop = (img: tf.Tensor3D) => {
 }
 
 // convert pixel data into a tensor
-const cropAndResizeImage = async (img: tf.Tensor3D, dims: [number, number] = [224, 224]): Promise<tf.Tensor3D> => {
+const cropAndResizeImage = async (img: tf.Tensor3D, dims: [number, number]): Promise<tf.Tensor3D> => {
   return tf.tidy(() => {
     const croppedImage = crop(tf.image.resizeBilinear(img, dims));
     return croppedImage.expandDims(0).toFloat().div(tf.scalar(127)).sub(tf.scalar(1));

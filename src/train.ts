@@ -28,7 +28,7 @@ const getBatchSize = (batchSize?: number, xs?: tf.Tensor3D) => {
   }
 
   if (xs !== undefined) {
-    return Math.floor(xs.shape[0] * 0.4);
+    return Math.floor(xs.shape[0] * 0.4) || 1;
   }
 
   return undefined;

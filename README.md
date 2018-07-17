@@ -67,6 +67,49 @@ const mlClassifier = new MLClassifier();
 
 This will begin loading the pretrained model and provide you with an object onto which to add data and train.
 
+### `constructor`
+
+`MLClassifier` accepts a number of callbacks when initialized:
+
+#### Parameters
+
+  * **onLoadStart** (`Function`) *Optional* - A callback for when `load` (loading the pre-trained model) is first called.
+  * **onLoadComplete** (`Function`) *Optional* - A callback for when `load` (loading the pre-trained model) is complete.
+  * **onAddDataStart** (`Function`) *Optional* - A callback for when `addData` is first called.
+  * **onAddDataComplete** (`Function`) *Optional* - A callback for when `addData` is complete.
+  * **onClearDataStart** (`Function`) *Optional* - A callback for when `clearData` is first called.
+  * **onClearDataComplete** (`Function`) *Optional* - A callback for when `clearData` is complete.
+  * **onTrainStart** (`Function`) *Optional* - A callback for when `train` is first called.
+  * **onTrainComplete** (`Function`) *Optional* - A callback for when `train` is complete.
+  * **onEvaluateStart** (`Function`) *Optional* - A callback for when `evaluate` is first called.
+  * **onEvaluateComplete** (`Function`) *Optional* - A callback for when `evaluate` is complete.
+  * **onPredictStart** (`Function`) *Optional* - A callback for when `predict` is first called.
+  * **onPredictComplete** (`Function`) *Optional* - A callback for when `predict` is complete.
+  * **onSaveStart** (`Function`) *Optional* - A callback for when `save` is first called.
+  * **onSaveComplete** (`Function`) *Optional* - A callback for when `save` is complete.
+
+
+#### Example
+```
+import MLClassifier from 'ml-classifier';
+const mlClassifier = new MLClassifier({
+  onLoadStart: () => console.log('onLoadStart'),
+  onLoadComplete: () => console.log('onLoadComplete'),
+  onAddDataStart: () => console.log('onAddDataStart'),
+  onAddDataComplete: () => console.log('onAddDataComplete'),
+  onClearDataStart: () => console.log('onClearDataStart'),
+  onClearDataComplete: () => console.log('onClearDataComplete'),
+  onTrainStart: () => console.log('onTrainStart'),
+  onTrainComplete: () => console.log('onTrainComplete'),
+  onEvaluateStart: () => console.log('onEvaluateStart'),
+  onEvaluateComplete: () => console.log('onEvaluateComplete'),
+  onPredictStart: () => console.log('onPredictStart'),
+  onPredictComplete: () => console.log('onPredictComplete'),
+  onSaveStart: () => console.log('onSaveStart'),
+  onSaveComplete: () => console.log('onSaveComplete'),
+});
+```
+
 ### `addData`
 
 This method takes an array of incoming images, an optional array of labels, and an optional dataType.
@@ -74,7 +117,8 @@ This method takes an array of incoming images, an optional array of labels, and 
 #### Example
 
 ```
-import MLClassifier, { DataType } from 'ml-classifier';
+import MLClassifier from 'ml-classifier';
+const mlClassifier = new MLClassifier();
 mlClassifier.addData(images, labels, 'train');
 ```
 
@@ -95,7 +139,8 @@ Nothing.
 #### Example
 
 ```
-import MLClassifier, { DataType } from 'ml-classifier';
+import MLClassifier from 'ml-classifier';
+const mlClassifier = new MLClassifier();
 mlClassifier.addData(images, labels, DataType.TRAIN);
 mlClassifier.train({
   callbacks: {
@@ -121,7 +166,8 @@ mlClassifier.train({
 #### Example
 
 ```
-import MLClassifier, { DataType } from 'ml-classifier';
+import MLClassifier from 'ml-classifier';
+const mlClassifier = new MLClassifier();
 mlClassifier.addData(images, labels, DataType.TRAIN);
 mlClassifier.train();
 mlClassifier.addData(evaluationImages, labels, DataType.EVALUATE);
@@ -143,7 +189,8 @@ mlClassifier.evaluate();
 #### Example
 
 ```
-import MLClassifier, { DataType } from 'ml-classifier';
+import MLClassifier from 'ml-classifier';
+const mlClassifier = new MLClassifier();
 mlClassifier.addData(images, labels, DataType.TRAIN);
 mlClassifier.train();
 mlClassifier.predict(imageToPredict);
@@ -164,7 +211,8 @@ mlClassifier.predict(imageToPredict);
 #### Example
 
 ```
-import MLClassifier, { DataType } from 'ml-classifier';
+import MLClassifier from 'ml-classifier';
+const mlClassifier = new MLClassifier();
 mlClassifier.addData(images, labels, DataType.TRAIN);
 mlClassifier.train();
 mlClassifier.save(('path-to-save');
@@ -183,7 +231,8 @@ mlClassifier.save(('path-to-save');
 #### Example
 
 ```
-import MLClassifier, { DataType } from 'ml-classifier';
+import MLClassifier from 'ml-classifier';
+const mlClassifier = new MLClassifier();
 mlClassifier.addData(images, labels, DataType.TRAIN);
 mlClassifier.train();
 mlClassifier.getModel();
@@ -203,7 +252,8 @@ The saved Tensorflow.js model.
 
 #### Example
 ```
-import MLClassifier, { DataType } from 'ml-classifier';
+import MLClassifier from 'ml-classifier';
+const mlClassifier = new MLClassifier();
 mlClassifier.addData(images, labels, DataType.TRAIN);
 mlClassifier.clearData(DataType.TRAIN);
 ```
