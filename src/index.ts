@@ -2,7 +2,9 @@ import * as tf from '@tensorflow/tfjs';
 import cropAndResizeImage from './cropAndResizeImage';
 import getClasses from './getClasses';
 import train from './train';
-import translateImages from './translateImages';
+import translateImages, {
+  IImageData,
+} from './translateImages';
 import loadPretrainedModel, {
   PRETRAINED_MODELS_KEYS,
 } from './loadPretrainedModel';
@@ -126,7 +128,7 @@ class MLClassifier {
 
   public getModel = () => this.model;
 
-  public addData = async (origImages: Array<tf.Tensor3D | HTMLImageElement>, origLabels: string[], dataType: string = 'train') => {
+  public addData = async (origImages: Array<tf.Tensor3D | IImageData | HTMLImageElement | string>, origLabels: string[], dataType: string = 'train') => {
     this.callbackFn('onAddData', 'start', origImages, origLabels, dataType);
     if (!origImages) {
       throw new Error('You must supply images');

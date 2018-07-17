@@ -38,7 +38,7 @@ const imageDataToTensor = async ({
   return tf.tensor3d(Array.from(data), [width, height, 4]);
 };
 
-interface IImageData {
+export interface IImageData {
   data: Uint8ClampedArray;
   width: number;
   height: number;
