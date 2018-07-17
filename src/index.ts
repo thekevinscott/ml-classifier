@@ -135,41 +135,32 @@ class MLClassifier {
       throw new Error('You must supply labels');
     }
 
-    console.log('await translation');
     const dims = await this.getInputDims();
-    console.log('dims', dims);
     const {
       images,
       errors,
       labels,
     } = await translateImages(origImages, dims, origLabels);
-    console.log('translation done', images, errors, labels);
     if (images.length !== labels.length) {
       throw new Error('Class mismatch between labels and images');
     }
 
     if (dataType === 'train' || dataType === 'eval') {
-      console.log('prepare to activate images');
       const activatedImages = await Promise.all(images.map(async (image: tf.Tensor3D, idx: number) => {
         await tf.nextFrame();
         return await this.cropAndActivateImage(image);
       }));
 
-      console.log('images activated');
       this.data.classes = getClasses(labels);
-      console.log('classes', this.data.classes);
       const xs = addData(activatedImages);
-      console.log('added xs');
       const ys = addLabels(labels, this.data.classes);
-      console.log('added ys');
       this.data[dataType] = {
         xs,
         ys,
       };
-      console.log('data all saved');
     }
 
-    this.callbackFn('onAddData', 'complete', origImages, labels, dataType);
+    this.callbackFn('onAddData', 'complete', origImages, labels, dataType, errors);
   }
 
   public clearData = async (dataType?: string) => {
@@ -217,7 +208,6 @@ class MLClassifier {
       throw new Error('You must call train prior to calling predict');
     }
     const dims = await this.getInputDims();
-    console.log('dims', dims);
     const {
       images,
       errors,

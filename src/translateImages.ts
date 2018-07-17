@@ -26,9 +26,7 @@ const imageToUint8ClampedArray = async (image: HTMLImageElement, dims: [number, 
 };
 
 const loadTensorFromHTMLImage = async (image: HTMLImageElement, dims: [number, number]) => {
-  console.log('prepare to get arr');
   const arr = await imageToUint8ClampedArray(image, dims);
-  console.log('got arr, prepare to get tensor');
   return imageDataToTensor(arr);
 }
 
@@ -37,7 +35,6 @@ const imageDataToTensor = async ({
   width,
   height,
 }: IImageData) => {
-  console.log('prepare to get tensor', width, height);
   return tf.tensor3d(Array.from(data), [width, height, 4]);
 };
 
@@ -49,23 +46,19 @@ interface IImageData {
 
 export interface ImageError {
   image: any;
-  error: Error,
+  error: Error;
+  index: number;
 }
 
 const getTranslatedImageAsTensor = async (image: tf.Tensor3D | IImageData | HTMLImageElement | string, dims: [number, number]) => {
   if (image instanceof tf.tensor3d) {
-    console.log('tensor');
     return image;
   } else if (typeof image === 'string') {
-    console.log('strgin');
     const loadedImage = await loadImage(image);
-    console.log('got loaded image');
     return await loadTensorFromHTMLImage(loadedImage, dims);
   } else if (image instanceof HTMLImageElement) {
-    console.log('html image el');
     return await loadTensorFromHTMLImage(image, dims);
   } else if (image instanceof ImageData) {
-    console.log('image data');
     return await imageDataToTensor(image);
   }
 
@@ -78,12 +71,9 @@ const translateImages = async (origImages: Array<tf.Tensor3D | IImageData | HTML
   const labels = [];
 
   for (let i = 0; i < origImages.length; i++) {
-    console.log('translating', i);
     const origImage = origImages[i];
     try {
-      console.log('prepare to get');
       const image = await getTranslatedImageAsTensor(origImage, dims);
-      console.log('gotten');
       // else, it is already a tensor
 
       images.push(image);
@@ -91,10 +81,10 @@ const translateImages = async (origImages: Array<tf.Tensor3D | IImageData | HTML
         labels.push(origLabels[i]);
       }
     } catch(error) {
-      console.log('error for', i);
       errors.push({
         image: origImage,
         error,
+        index: i,
       });
     }
   }
