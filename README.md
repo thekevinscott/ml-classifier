@@ -6,7 +6,7 @@ This package is intended as a companion for [`ml-classifier-ui`](https://github.
 
 ## Demo
 
-An interactive demo can be found here.
+An interactive [demo can be found here](https://thekevinscott.github.io/ml-classifier-ui/).
 
 ![Demo](https://github.com/thekevinscott/ml-classifier-ui/raw/master/example/public/example.gif)
 *Screenshot of demo*
