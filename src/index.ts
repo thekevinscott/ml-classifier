@@ -22,19 +22,19 @@ import {
 
 interface IArgs {
   onLoadStart?: Function;
-  onAddDataStart?: Function;
-  onClearDataStart?: Function;
-  onTrainStart?: Function;
-  onEvaluateStart?: Function;
-  onSaveStart?: Function;
-  onPredictStart?: Function;
   onLoadComplete?: Function;
+  onAddDataStart?: Function;
   onAddDataComplete?: Function;
+  onClearDataStart?: Function;
   onClearDataComplete?: Function;
+  onTrainStart?: Function;
   onTrainComplete?: Function;
-  onEvaluateComplete?: Function;
-  onSaveComplete?: Function;
   onPredictComplete?: Function;
+  onPredictStart?: Function;
+  onEvaluateStart?: Function;
+  onEvaluateComplete?: Function;
+  onSaveStart?: Function;
+  onSaveComplete?: Function;
 }
 
 // export { DataType } from './types';

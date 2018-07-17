@@ -4,6 +4,13 @@ ML Classifier is a machine learning engine for quickly training image classifica
 
 This package is intended as a companion for [`ml-classifier-ui`](https://github.com/thekevinscott/ml-classifier-ui), which provides a web frontend in React for uploading data and seeing results.
 
+## Demo
+
+An interactive demo can be found here.
+
+![Demo](https://github.com/thekevinscott/ml-classifier-ui/raw/master/example/public/example.gif)
+*Screenshot of demo*
+
 ## Getting Started
 
 ### Installation
