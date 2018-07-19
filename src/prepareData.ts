@@ -16,9 +16,9 @@ const oneHot = (labelIndex: number, classLength: number) => tf.tidy(() => tf.one
 //   return newData;
 // }), undefined);
 
-export const addData = (tensors: tf.Tensor3D[]): tf.Tensor3D => {
+export const addData = (tensors: tf.Tensor[]): tf.Tensor => {
   const data = tf.keep(tensors[0]);
-  return tensors.slice(1).reduce((data: tf.Tensor3D, tensor: tf.Tensor3D) => tf.tidy(() => {
+  return tensors.slice(1).reduce((data: tf.Tensor, tensor: tf.Tensor) => tf.tidy(() => {
     const newData = tf.keep(data.concat(tensor, 0));
     data.dispose();
     return newData;

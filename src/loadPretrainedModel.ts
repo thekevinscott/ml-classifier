@@ -11,7 +11,11 @@ export const PRETRAINED_MODELS = {
   },
 };
 
-const loadPretrainedModel = async (pretrainedModel: string) => {
+const loadPretrainedModel = async (pretrainedModel: string | tf.Model = PRETRAINED_MODELS_KEYS.MOBILENET) => {
+  if (pretrainedModel instanceof tf.Model) {
+    return pretrainedModel;
+  }
+
   if (!PRETRAINED_MODELS[pretrainedModel]) {
     throw new Error('You have supplied an invalid key for a pretrained model');
   }

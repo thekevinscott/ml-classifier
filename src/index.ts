@@ -5,13 +5,12 @@ import train from './train';
 import translateImages, {
   IImageData,
 } from './translateImages';
-import loadPretrainedModel, {
-  PRETRAINED_MODELS_KEYS,
-} from './loadPretrainedModel';
+import loadPretrainedModel from './loadPretrainedModel';
+// import log, { resetLog } from './log';
 import {
   addData,
   addLabels,
-} from './prepareTrainingData';
+} from './prepareData';
 import getDefaultDownloadHandler from './getDefaultDownloadHandler';
 
 import {
@@ -19,31 +18,16 @@ import {
   // IConfigurationParams,
   IData,
   ICollectedData,
+  IArgs,
   // DataType,
 } from './types';
-
-interface IArgs {
-  onLoadStart?: Function;
-  onLoadComplete?: Function;
-  onAddDataStart?: Function;
-  onAddDataComplete?: Function;
-  onClearDataStart?: Function;
-  onClearDataComplete?: Function;
-  onTrainStart?: Function;
-  onTrainComplete?: Function;
-  onPredictComplete?: Function;
-  onPredictStart?: Function;
-  onEvaluateStart?: Function;
-  onEvaluateComplete?: Function;
-  onSaveStart?: Function;
-  onSaveComplete?: Function;
-}
 
 // export { DataType } from './types';
 
 class MLClassifier {
   // private pretrainedModel: typeof tf.model;
-  private pretrainedModel: any;
+  // private pretrainedModel: any;
+  private pretrainedModel: tf.Model;
   // private model: tf.Sequential;
   private model: any;
   private callbacks: Function[] = [];
@@ -66,11 +50,17 @@ class MLClassifier {
 
   private init = async () => {
     this.callbackFn('onLoad', 'start');
-    this.pretrainedModel = await loadPretrainedModel(PRETRAINED_MODELS_KEYS.MOBILENET);
+    this.pretrainedModel = await loadPretrainedModel(this.args.pretrainedModel);
 
     this.callbacks.map(callback => callback());
 
     this.callbackFn('onLoad', 'complete');
+
+    // Warmup the model
+    const dims = await this.getInputDims();
+    tf.tidy(() => {
+      this.pretrainedModel.predict(tf.zeros([1, ...dims, 3]));
+    });
   }
 
   private loaded = async () => new Promise(resolve => {
@@ -93,8 +83,11 @@ class MLClassifier {
       batchInputShape,
     } = inputLayers[0];
     const dims = await this.getInputDims();
+    await tf.nextFrame();
     const processedImage = await cropAndResizeImage(image, dims);
-    return this.pretrainedModel.predict(processedImage);
+    await tf.nextFrame();
+    const pred = this.pretrainedModel.predict(processedImage);
+    return pred;
   }
 
   private getInputDims = async (): Promise<[number, number]> => {
@@ -128,7 +121,7 @@ class MLClassifier {
 
   public getModel = () => this.model;
 
-  public addData = async (origImages: Array<tf.Tensor3D | IImageData | HTMLImageElement | string>, origLabels: string[], dataType: string = 'train') => {
+  public addData = async (origImages: Array<tf.Tensor | IImageData | HTMLImageElement | string>, origLabels: string[], dataType: string = 'train') => {
     this.callbackFn('onAddData', 'start', origImages, origLabels, dataType);
     if (!origImages) {
       throw new Error('You must supply images');
@@ -148,20 +141,27 @@ class MLClassifier {
     }
 
     if (dataType === 'train' || dataType === 'eval') {
-      const activatedImages = await Promise.all(images.map(async (image: tf.Tensor3D, idx: number) => {
+      const activatedImages: tf.Tensor[] = [];
+      for (let i = 0; i < images.length; i++) {
+        const image = images[i];
+        // TODO: Debug this any type
+        const activatedImage: any = await this.cropAndActivateImage(image);
+        activatedImages.push(activatedImage);
         await tf.nextFrame();
-        return await this.cropAndActivateImage(image);
-      }));
+      }
 
       this.data.classes = getClasses(labels);
       const xs = addData(activatedImages);
+      await tf.nextFrame();
       const ys = addLabels(labels, this.data.classes);
+      await tf.nextFrame();
       this.data[dataType] = {
         xs,
         ys,
       };
     }
 
+    await tf.nextFrame();
     this.callbackFn('onAddData', 'complete', origImages, labels, dataType, errors);
   }
 
@@ -196,47 +196,54 @@ class MLClassifier {
     const {
       model,
       history,
-    } = await train(data, classes, params);
+    } = await train(this.pretrainedModel, data, classes, params, this.args);
 
     this.model = model;
     this.callbackFn('onTrain', 'complete', params, history);
     return history;
   }
 
-  public predict = async (origImage: tf.Tensor3D | HTMLImageElement | string, label?: string) => {
-    this.callbackFn('onPredict', 'start', origImage);
-    await this.loaded();
-    if (!this.model) {
-      throw new Error('You must call train prior to calling predict');
-    }
-    const dims = await this.getInputDims();
-    const {
-      images,
-      errors,
-    } = await translateImages([origImage], dims);
-    if (errors && errors.length) {
-      throw errors[0].error;
-    }
-    const data = images[0];
-    const img = await this.cropAndActivateImage(data);
-    // TODO: Do these images need to be activated?
-    const predictedClass = tf.tidy(() => {
-      const predictions = this.model.predict(img);
-      // TODO: address this
-      return (predictions as tf.Tensor).as1D().argMax();
-    });
+  public predict = async (origImage: tf.Tensor | HTMLImageElement | string, label?: string) => {
+    try {
+      this.callbackFn('onPredict', 'start', origImage);
+      await this.loaded();
+      if (!this.model) {
+        throw new Error('You must call train prior to calling predict');
+      }
+      const dims = await this.getInputDims();
+      const {
+        images,
+        errors,
+      } = await translateImages([origImage], dims);
+      if (errors && errors.length) {
+        throw errors[0].error;
+      }
+      const data = images[0];
+      const img = await this.cropAndActivateImage(data);
+      // TODO: Do these images need to be activated?
+      const predictedClass = tf.tidy(() => {
+        const predictions = this.model.predict(img);
+        // TODO: address this
+        return (predictions as tf.Tensor).as1D().argMax();
+      });
 
-    const classId = (await predictedClass.data())[0];
-    predictedClass.dispose();
-    const prediction = Object.entries(this.data.classes).reduce((obj, [
-      key,
-      val,
-    ]) => ({
-      ...obj,
-      [val]: key,
-    }), {})[classId];
-    this.callbackFn('onPredict', 'complete', origImage, label, prediction);
-    return prediction;
+      console.log(predictedClass.dataSync());
+
+      const classId = (await predictedClass.data())[0];
+      predictedClass.dispose();
+      const prediction = Object.entries(this.data.classes).reduce((obj, [
+        key,
+        val,
+      ]) => ({
+        ...obj,
+        [val]: key,
+      }), {})[classId];
+      this.callbackFn('onPredict', 'complete', origImage, label, prediction);
+      return prediction;
+    } catch(err) {
+      console.error(err, origImage, label);
+      throw new Error(err);
+    }
   }
 
   public evaluate = async (params: IParams = {}) => {
@@ -271,3 +278,5 @@ class MLClassifier {
 }
 
 export default MLClassifier;
+
+export { PRETRAINED_MODELS_KEYS as PRETRAINED_MODELS } from './loadPretrainedModel';

@@ -1,4 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
+// import log from './log';
 
 // import {
 //   TypedArray,
@@ -50,14 +51,18 @@ export interface ImageError {
   index: number;
 }
 
-const getTranslatedImageAsTensor = async (image: tf.Tensor3D | IImageData | HTMLImageElement | string, dims: [number, number]) => {
+const getTranslatedImageAsTensor = async (image: tf.Tensor | IImageData | HTMLImageElement | string, dims: [number, number], num: number) => {
+  await tf.nextFrame();
   if (image instanceof tf.tensor3d) {
     return image;
   } else if (typeof image === 'string') {
     const loadedImage = await loadImage(image);
+    await tf.nextFrame();
     return await loadTensorFromHTMLImage(loadedImage, dims);
   } else if (image instanceof HTMLImageElement) {
-    return await loadTensorFromHTMLImage(image, dims);
+    const tensor = await loadTensorFromHTMLImage(image, dims);
+    await tf.nextFrame();
+    return tensor;
   } else if (image instanceof ImageData) {
     return await imageDataToTensor(image);
   }
@@ -65,7 +70,7 @@ const getTranslatedImageAsTensor = async (image: tf.Tensor3D | IImageData | HTML
   throw new Error('Unsupported image type');
 };
 
-const translateImages = async (origImages: Array<tf.Tensor3D | IImageData | HTMLImageElement | string>, dims: [number, number], origLabels?: string[]) => {
+const translateImages = async (origImages: Array<tf.Tensor | IImageData | HTMLImageElement | string>, dims: [number, number], origLabels?: string[]) => {
   const images = [];
   const errors: ImageError[] = [];
   const labels = [];
@@ -73,7 +78,7 @@ const translateImages = async (origImages: Array<tf.Tensor3D | IImageData | HTML
   for (let i = 0; i < origImages.length; i++) {
     const origImage = origImages[i];
     try {
-      const image = await getTranslatedImageAsTensor(origImage, dims);
+      const image = await getTranslatedImageAsTensor(origImage, dims, i);
       // else, it is already a tensor
 
       images.push(image);
@@ -87,6 +92,7 @@ const translateImages = async (origImages: Array<tf.Tensor3D | IImageData | HTML
         index: i,
       });
     }
+    await tf.nextFrame();
   }
 
   return {

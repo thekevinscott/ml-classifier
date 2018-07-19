@@ -2,6 +2,7 @@ import * as tf from '@tensorflow/tfjs';
 import {
   IParams,
   IImageData,
+  IArgs,
 } from './types';
 
 const defaultLayers = ({ classes }: { classes: number }) => {
@@ -22,7 +23,7 @@ const defaultLayers = ({ classes }: { classes: number }) => {
   ];
 };
 
-const getBatchSize = (batchSize?: number, xs?: tf.Tensor3D) => {
+const getBatchSize = (batchSize?: number, xs?: tf.Tensor) => {
   if (batchSize) {
     return batchSize;
   }
@@ -34,15 +35,14 @@ const getBatchSize = (batchSize?: number, xs?: tf.Tensor3D) => {
   return undefined;
 };
 
-const train = async ({
-  xs,
-  ys,
-}: IImageData, classes: number, params: IParams) => {
-  if (xs === undefined || ys === undefined) {
-    throw new Error('Add some examples before training!');
-  }
+const getModel = (pretrainedModel: tf.Model, data: IImageData, classes: number, params: IParams, args: IArgs) => {
+  if (args.trainingModel) {
+    if (typeof args.trainingModel === 'function') {
+      return args.trainingModel(data, classes, params);
+    }
 
-  // const batch = data.nextTrainBatch(BATCH_SIZE);
+    return args.trainingModel;
+  }
 
   const model = tf.sequential({
     layers: defaultLayers({ classes }),
@@ -55,6 +55,23 @@ const train = async ({
     loss: 'categoricalCrossentropy',
     metrics: ['accuracy'],
   });
+
+  return model;
+};
+
+const train = async (pretrainedModel: tf.Model, data: IImageData, classes: number, params: IParams, args: IArgs) => {
+  const {
+    xs,
+    ys,
+  } = data;
+
+  if (xs === undefined || ys === undefined) {
+    throw new Error('Add some examples before training!');
+  }
+
+  // const batch = data.nextTrainBatch(BATCH_SIZE);
+
+  const model = getModel(pretrainedModel, data, classes, params, args);
 
   const batchSize = getBatchSize(params.batchSize, xs);
 

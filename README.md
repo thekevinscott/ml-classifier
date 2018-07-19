@@ -64,6 +64,63 @@ When you have a trained model you're happy with, save it with:
 mlClassifier.save();
 ```
 
+## Using the saved model
+
+When you hit save, Tensorflow.js will download a weights file and a model topology file.
+
+You'll need to combine both into a single `json` file. Open up your model topology file and at the top level of the JSON file, make sure to add a `weightsManifest` key pointing to your weights, like:
+
+```
+{
+  "weightsManifest": "ml-classifier-class1-class2.weights.bin",
+  "modelTopology": {
+    ...
+  }
+}
+```
+
+When using the model in your app, there's a few things to keep in mind:
+
+1. You need to make sure you transform images into the correct dimensions, depending on the pretrained model it was trained with. (For MOBILENET, this would be 1x224x224x3).
+2. You must create a pretrained model matching the dimensions used to train. An example is below for MOBILENET.
+3. You must first run your images through the pretrained model to activate them.
+4. After getting the final prediction, you must take the arg max.
+5. You'll get back a number indicating your class.
+
+Full example for MOBILENET:
+
+```
+    const loadImage = (src) => new Promise((resolve, reject) => {
+      const image = new Image();
+      image.src = src;
+      image.crossOrigin = 'Anonymous';
+      image.onload = () => resolve(image);
+      image.onerror = (err) => reject(err);
+    });
+
+    const pretrainedModelURL = 'https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/model.json';
+
+    tf.loadModel(pretrainedModelURL).then(model => {
+      const layer = model.getLayer('conv_pw_13_relu');
+      return tf.model({
+        inputs: [model.inputs[0]],
+        outputs: layer.output,
+      });
+    }).then(pretrainedModel => {
+      return tf.loadModel('/model.json').then(model => {
+        return loadImage('/trees/tree1.png').then(loadedImage => {
+          const image = tf.reshape(tf.fromPixels(loadedImage), [1,224,224,3]);
+          const pretrainedModelPrediction = pretrainedModel.predict(image);
+          const modelPrediction = model.predict(pretrainedModelPrediction);
+          const prediction = modelPrediction.as1D().argMax().dataSync()[0];
+          console.log(prediction);
+        });
+      });
+    }).catch(err => {
+      console.error('Error', err);
+    });
+```
+
 ## API Documentation
 
 Start by instantiating a new instance of `MLClassifier` with:
@@ -76,10 +133,16 @@ This will begin loading the pretrained model and provide you with an object onto
 
 ### `constructor`
 
-`MLClassifier` accepts a number of callbacks when initialized:
+`MLClassifier` accepts a number of callbacks for beginning and end of various methods.
+
+You can provide a custom pretrained model as a `pretrainedModel`.
+
+You can provide a custom training model as a `trainingModel`.
 
 #### Parameters
 
+  * **pretrainedModel** (`string | tf.Model`) *Optional* - A string denoting which pretrained model to load from an internal config. Valid strings can be found on the exported object `PRETRAINED_MODELS`. You can also specify a preloaded pretrained model directly.
+  * **trainingModel** (`tf.Model | Function`) *Optional* - A custom model to use during training. Can be provided as a `tf.Model` or as a function that accepts `{xs: [...], ys: [...]`, number of `classes`, and `params` provided to train.
   * **onLoadStart** (`Function`) *Optional* - A callback for when `load` (loading the pre-trained model) is first called.
   * **onLoadComplete** (`Function`) *Optional* - A callback for when `load` (loading the pre-trained model) is complete.
   * **onAddDataStart** (`Function`) *Optional* - A callback for when `addData` is first called.
@@ -98,8 +161,13 @@ This will begin loading the pretrained model and provide you with an object onto
 
 #### Example
 ```
-import MLClassifier from 'ml-classifier';
+import MLClassifier, {
+  PRETRAINED_MODELS,
+} from 'ml-classifier';
+
 const mlClassifier = new MLClassifier({
+  pretrainedModel: PRETRAINED_MODELS.MOBILENET,
+
   onLoadStart: () => console.log('onLoadStart'),
   onLoadComplete: () => console.log('onLoadComplete'),
   onAddDataStart: () => console.log('onAddDataStart'),
@@ -114,6 +182,18 @@ const mlClassifier = new MLClassifier({
   onPredictComplete: () => console.log('onPredictComplete'),
   onSaveStart: () => console.log('onSaveStart'),
   onSaveComplete: () => console.log('onSaveComplete'),
+});
+```
+
+Example of specifying a preloaded pretrained model:
+
+```
+import MLClassifier from 'ml-classifier';
+
+const mlClassifier = tf.loadModel('... some pretrained model ...').then(model => {
+  return new MLClassifier({
+    pretrainedModel: model,
+  });
 });
 ```
 
@@ -302,3 +382,5 @@ yarn test
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details
+
+![](https://ga-beacon.appspot.com/UA-112845439-4/ml-classifier/readme)
