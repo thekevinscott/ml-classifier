@@ -227,8 +227,6 @@ class MLClassifier {
         return (predictions as tf.Tensor).as1D().argMax();
       });
 
-      console.log(predictedClass.dataSync());
-
       const classId = (await predictedClass.data())[0];
       predictedClass.dispose();
       const prediction = Object.entries(this.data.classes).reduce((obj, [
