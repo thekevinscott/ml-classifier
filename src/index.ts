@@ -215,7 +215,7 @@ class MLClassifier {
         images,
         errors,
       } = await translateImages([origImage], dims);
-      if (errors && errors.length) {
+      if (errors && errors.length && !images[0]) {
         throw errors[0].error;
       }
       const data = images[0];
@@ -240,7 +240,7 @@ class MLClassifier {
       return prediction;
     } catch(err) {
       console.error(err, origImage, label);
-      throw new Error(err);
+      // throw new Error(err);
     }
   }
 
