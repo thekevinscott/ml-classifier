@@ -76,12 +76,12 @@ class MLClassifier {
   // private cropAndActivateImage = async (image: tf.Tensor3D) => {
   private cropAndActivateImage = async (image: any) => {
     await this.loaded();
-    const {
-      inputLayers,
-    } = this.pretrainedModel;
-    const {
-      batchInputShape,
-    } = inputLayers[0];
+    // const {
+    //   inputLayers,
+    // } = this.pretrainedModel;
+    // const {
+    //   batchInputShape,
+    // } = inputLayers[0];
     const dims = await this.getInputDims();
     await tf.nextFrame();
     const processedImage = await cropAndResizeImage(image, dims);
