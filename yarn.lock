@@ -928,35 +928,47 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
-"@tensorflow/tfjs-converter@0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-converter/-/tfjs-converter-0.5.1.tgz#8cf093b39bb56022eaa2a7930166d12b40965e62"
-  integrity sha512-lBXdMnmEiiDmChSC69sKz7u0VG1KoOcgC1ZxtqK0SzGhr3rWsUfSP7akA6IiPpPf3DEa07pMG0pdiKsZbwAFuw==
+"@tensorflow/tfjs-converter@0.8.4":
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-converter/-/tfjs-converter-0.8.4.tgz#7c1326e9858c6c3a6d23947e31a73e9458450a9b"
+  integrity sha512-hHTyQiQOeYvFB/zL/jDT51hx+voOoKOVHSAWzPG10G8+H7ljQsRzxj19X/PIk8EUo9TXJT2Aj+/WW0guK+0wJg==
   dependencies:
     "@types/long" "~3.0.32"
     protobufjs "~6.8.6"
-    url "~0.11.0"
 
-"@tensorflow/tfjs-core@0.12.4":
-  version "0.12.4"
-  resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-core/-/tfjs-core-0.12.4.tgz#39e6239617856fce82b41936f711f78190aa71bd"
-  integrity sha512-xpovLLx0IrXU0KvoMkT5upOIruGtVm4IISIKrwIKt0nGyej+Lu4rim9iGHV6Fd6QKPTJu55Rw+lW9/uqPWG2dA==
+"@tensorflow/tfjs-core@0.15.4":
+  version "0.15.4"
+  resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-core/-/tfjs-core-0.15.4.tgz#aaf52acd209476ebde7bd9a37a7c60ec9d067b65"
+  integrity sha512-CWi6PuWOBfFRRzn4gl4rcCtwHkimYexGaQi5rwF2jPntknT8TIhonkacvuBROEfeq2PEvqKzCWJTU5+AmCj2HQ==
   dependencies:
+    "@types/seedrandom" "2.4.27"
+    "@types/webgl-ext" "0.0.30"
+    "@types/webgl2" "0.0.4"
+    seedrandom "2.4.3"
+
+"@tensorflow/tfjs-data@0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-data/-/tfjs-data-0.2.3.tgz#67c0cd505485c9b0b6a83cb1c8a24559c5adfa68"
+  integrity sha512-U9eDD35i0jFQtbm90XMP+dVEwaE0hCrhbt6OEpDCTYxdCLOMDnKVmx+q2TOoCPvTxToC6jHOMPKXO23bLAJsxw==
+  dependencies:
+    "@types/node-fetch" "^2.1.2"
+    node-fetch "~2.1.2"
     seedrandom "~2.4.3"
 
-"@tensorflow/tfjs-layers@0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-layers/-/tfjs-layers-0.7.0.tgz#6bee18a220ece102a56be785cd1c67028f968a63"
-  integrity sha512-lRB8PLP1Nf6tAuXW7QlPUfYRXfrVWsqS0b5XDjcFwA8Snv2KZeTswo8Fd4ytSF6whMy+TzE+S1eIa736ULgy2g==
+"@tensorflow/tfjs-layers@0.10.3":
+  version "0.10.3"
+  resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-layers/-/tfjs-layers-0.10.3.tgz#cf4001b5b7566b1526e65e615439e85070a1012c"
+  integrity sha512-Xhaz4+ZuL2SEm3S0u4x04dMYMrcG4w4dhMOjoQW8GhAJU4p7LkmP9TmwMEHp7CIVJiJzzQy7Hg8E5fESEnJinA==
 
-"@tensorflow/tfjs@^0.12.2":
-  version "0.12.2"
-  resolved "https://registry.yarnpkg.com/@tensorflow/tfjs/-/tfjs-0.12.2.tgz#fb48543f7afca7f3ee2d449d62e6145f42438ea3"
-  integrity sha512-hUXznNvsZnt+7UOby5TzroxwsPr5P3JKRo49o83EtslHN209nVUwQHrkI4z0E2TegRSJ1+h5R9D3xG1Rg3w0Yw==
+"@tensorflow/tfjs@^0.15.3":
+  version "0.15.3"
+  resolved "https://registry.yarnpkg.com/@tensorflow/tfjs/-/tfjs-0.15.3.tgz#6608833952858c8984f20962eb86624f99196f06"
+  integrity sha512-NBAs+iGBNBxprm98mk488EfTDl2kA/lzNguoQGEMeIPWVHTbadSn2QV5xXKAf/fcOat+JwVfqe2vxHBbTjHMOw==
   dependencies:
-    "@tensorflow/tfjs-converter" "0.5.1"
-    "@tensorflow/tfjs-core" "0.12.4"
-    "@tensorflow/tfjs-layers" "0.7.0"
+    "@tensorflow/tfjs-converter" "0.8.4"
+    "@tensorflow/tfjs-core" "0.15.4"
+    "@tensorflow/tfjs-data" "0.2.3"
+    "@tensorflow/tfjs-layers" "0.10.3"
 
 "@types/estree@0.0.39":
   version "0.0.39"
@@ -973,6 +985,13 @@
   resolved "https://registry.yarnpkg.com/@types/long/-/long-3.0.32.tgz#f4e5af31e9e9b196d8e5fca8a5e2e20aa3d60b69"
   integrity sha512-ZXyOOm83p7X8p3s0IYM3VeueNmHpkk/yMlP8CLeOnEcu6hIwPH7YjZBvhQkR0ZFS2DqZAxKtJ/M5fcuv3OU5BA==
 
+"@types/node-fetch@^2.1.2":
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.1.6.tgz#4326288b49f352a142f03c63526ebce0f4c50877"
+  integrity sha512-Hv1jgh3pfpUEl2F2mqUd1AfLSk1YbUCeBJFaP36t7esAO617dErqdxWb5cdG2NfJGOofkmBW36fdx0dVewxDRg==
+  dependencies:
+    "@types/node" "*"
+
 "@types/node@*":
   version "10.5.2"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.5.2.tgz#f19f05314d5421fe37e74153254201a7bf00a707"
@@ -987,6 +1006,21 @@
   version "8.10.20"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.20.tgz#fe674ea52e13950ab10954433a7824438aabbcac"
   integrity sha512-M7x8+5D1k/CuA6jhiwuSCmE8sbUWJF0wYsjcig9WrXvwUI5ArEoUBdOXpV4JcEMrLp02/QbDjw+kI+vQeKyQgg==
+
+"@types/seedrandom@2.4.27":
+  version "2.4.27"
+  resolved "https://registry.yarnpkg.com/@types/seedrandom/-/seedrandom-2.4.27.tgz#9db563937dd86915f69092bc43259d2f48578e41"
+  integrity sha1-nbVjk33YaRX2kJK8QyWdL0hXjkE=
+
+"@types/webgl-ext@0.0.30":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@types/webgl-ext/-/webgl-ext-0.0.30.tgz#0ce498c16a41a23d15289e0b844d945b25f0fb9d"
+  integrity sha512-LKVgNmBxN0BbljJrVUwkxwRYqzsAEPcZOe6S2T6ZaBDIrFp0qu4FNlpc5sM1tGbXUYFgdVQIoeLk1Y1UoblyEg==
+
+"@types/webgl2@0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@types/webgl2/-/webgl2-0.0.4.tgz#c3b0f9d6b465c66138e84e64cb3bdf8373c2c279"
+  integrity sha512-PACt1xdErJbMUOUweSrbVM7gSIYm1vTncW2hF6Os/EeWi6TXYAYMPp+8v6rzHmypE5gHrxaxZNXgMkJVIdZpHw==
 
 abab@^1.0.4:
   version "1.0.4"
@@ -3836,6 +3870,11 @@ needle@^2.2.0:
     iconv-lite "^0.4.4"
     sax "^1.2.4"
 
+node-fetch@~2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.1.2.tgz#ab884e8e7e57e38a944753cec706f788d1768bb5"
+  integrity sha1-q4hOjn5X44qUR1POxwb3iNF2i7U=
+
 node-int64@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
@@ -4244,11 +4283,6 @@ psl@^1.1.24:
   resolved "https://registry.yarnpkg.com/psl/-/psl-1.1.28.tgz#4fb6ceb08a1e2214d4fd4de0ca22dae13740bc7b"
   integrity sha512-+AqO1Ae+N/4r7Rvchrdm432afjT9hqJRyBN3DQv9At0tPz4hIFSGKbq64fN9dVoCow4oggIIax5/iONx0r9hZw==
 
-punycode@1.3.2:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.3.2.tgz#9653a036fb7c1ee42342f2325cceefea3926c48d"
-  integrity sha1-llOgNvt8HuQjQvIyXM7v6jkmxI0=
-
 punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
@@ -4263,11 +4297,6 @@ qs@~6.5.1:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
   integrity sha512-N5ZAX4/LxJmF+7wN74pUD6qAh9/wnvdQcjq9TZjevvXzSUo7bfmw91saqMjzGS2xq91/odN2dW/WOl7qQHNDGA==
-
-querystring@0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
-  integrity sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=
 
 randomatic@^3.0.0:
   version "3.0.0"
@@ -4599,7 +4628,7 @@ sax@^1.2.4:
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
   integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
 
-seedrandom@~2.4.3:
+seedrandom@2.4.3, seedrandom@~2.4.3:
   version "2.4.3"
   resolved "https://registry.yarnpkg.com/seedrandom/-/seedrandom-2.4.3.tgz#2438504dad33917314bff18ac4d794f16d6aaecc"
   integrity sha1-JDhQTa0zkXMUv/GKxNeU8W1qrsw=
@@ -5199,14 +5228,6 @@ urix@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/urix/-/urix-0.1.0.tgz#da937f7a62e21fec1fd18d49b35c2935067a6c72"
   integrity sha1-2pN/emLiH+wf0Y1Js1wpNQZ6bHI=
-
-url@~0.11.0:
-  version "0.11.0"
-  resolved "https://registry.yarnpkg.com/url/-/url-0.11.0.tgz#3838e97cfc60521eb73c525a8e55bfdd9e2e28f1"
-  integrity sha1-ODjpfPxgUh63PFJajlW/3Z4uKPE=
-  dependencies:
-    punycode "1.3.2"
-    querystring "0.2.0"
 
 use@^3.1.0:
   version "3.1.0"

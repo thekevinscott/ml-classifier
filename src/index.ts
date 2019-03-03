@@ -1,4 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
+export const tf2 = tf;
 import cropAndResizeImage from './cropAndResizeImage';
 import getClasses from './getClasses';
 import train from './train';
@@ -6,7 +7,6 @@ import translateImages, {
   IImageData,
 } from './translateImages';
 import loadPretrainedModel from './loadPretrainedModel';
-// import log, { resetLog } from './log';
 import {
   addData,
   addLabels,
@@ -19,10 +19,7 @@ import {
   IData,
   ICollectedData,
   IArgs,
-  // DataType,
 } from './types';
-
-// export { DataType } from './types';
 
 class MLClassifier {
   // private pretrainedModel: typeof tf.model;
@@ -36,7 +33,7 @@ class MLClassifier {
     classes: {},
   };
 
-  constructor(args: IArgs) {
+  constructor(args: IArgs = {}) {
     this.args = args;
     this.init();
   }

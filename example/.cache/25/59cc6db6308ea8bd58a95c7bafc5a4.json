@@ -1,0 +1,1 @@
+{"id":"dog.jpg","dependencies":[{"name":"/www/ml-classifier/.babelrc","includedInParent":true,"mtime":1530417349429},{"name":"/www/ml-classifier/example/package.json","includedInParent":true,"mtime":1551631872820}],"generated":{"js":"module.exports = \"/e6ddbaa40e957c007050197603a7048a.jpg\";"},"hash":"4fd09f8849c908aaad6d1ca4a880a86e","cacheData":{"env":{}}}

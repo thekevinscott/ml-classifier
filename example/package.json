@@ -1,0 +1,27 @@
+{
+  "name": "ml-classifier-example",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "develop": "parcel index.html"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.51",
+    "@babel/plugin-proposal-decorators": "^7.0.0-beta.51",
+    "@babel/plugin-transform-classes": "^7.0.0-beta.51",
+    "@babel/preset-env": "^7.0.0-beta.51",
+    "@babel/preset-stage-0": "^7.0.0-beta.51",
+    "@babel/preset-typescript": "^7.0.0-beta.51",
+    "babel-core": "^7.0.0-0",
+    "babel-jest": "^23.2.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
+    "gh-pages": "^2.0.1",
+    "parcel": "^1.11.0"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs": "^0.15.3"
+  }
+}
