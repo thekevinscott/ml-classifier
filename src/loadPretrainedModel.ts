@@ -21,7 +21,7 @@ const loadPretrainedModel = async (pretrainedModel: string | tf.Model = PRETRAIN
   }
 
   const config = PRETRAINED_MODELS[pretrainedModel];
-  const model = await tf.loadModel(config.url);
+  const model = await tf.loadLayersModel(config.url);
   const layer = model.getLayer(config.layer);
   return tf.model({
     inputs: [model.inputs[0]],

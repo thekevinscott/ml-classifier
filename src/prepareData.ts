@@ -17,6 +17,10 @@ const oneHot = (labelIndex: number, classLength: number) => tf.tidy(() => tf.one
 // }), undefined);
 
 export const addData = (tensors: tf.Tensor[]): tf.Tensor => {
+  if (!tensors.length) {
+    throw new Error('You tried to add an empty tensor');
+  }
+
   const data = tf.keep(tensors[0]);
   return tensors.slice(1).reduce((data: tf.Tensor, tensor: tf.Tensor) => tf.tidy(() => {
     const newData = tf.keep(data.concat(tensor, 0));

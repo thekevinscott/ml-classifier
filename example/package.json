@@ -10,6 +10,8 @@
     "@babel/core": "^7.0.0-beta.51",
     "@babel/plugin-proposal-decorators": "^7.0.0-beta.51",
     "@babel/plugin-transform-classes": "^7.0.0-beta.51",
+    "@babel/plugin-transform-regenerator": "^7.3.4",
+    "@babel/plugin-transform-runtime": "^7.3.4",
     "@babel/preset-env": "^7.0.0-beta.51",
     "@babel/preset-stage-0": "^7.0.0-beta.51",
     "@babel/preset-typescript": "^7.0.0-beta.51",
@@ -22,6 +24,8 @@
     "parcel": "^1.11.0"
   },
   "dependencies": {
-    "@tensorflow/tfjs": "^0.15.3"
+    "@babel/runtime-corejs2": "^7.3.4",
+    "@tensorflow/tfjs": "^0.15.3",
+    "ml-classifier": "^0.4.3"
   }
 }

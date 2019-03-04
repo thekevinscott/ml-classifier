@@ -109,6 +109,10 @@ class MLClassifier {
       throw new Error(`Datatype ${dataType} unsupported`);
     }
 
+    if (!this.data[dataType]) {
+      throw new Error(`Data for datatype ${dataType} not yet added`);
+    }
+
     return {
       xs: this.data[dataType].xs,
       ys: this.data[dataType].ys,
@@ -120,10 +124,10 @@ class MLClassifier {
 
   public addData = async (origImages: Array<tf.Tensor | IImageData | HTMLImageElement | string>, origLabels: string[], dataType: string = 'train') => {
     this.callbackFn('onAddData', 'start', origImages, origLabels, dataType);
-    if (!origImages) {
+    if (!origImages || !origImages.length) {
       throw new Error('You must supply images');
     }
-    if (!origLabels) {
+    if (!origLabels || !origLabels.length) {
       throw new Error('You must supply labels');
     }
 
