@@ -27,9 +27,11 @@ describe('loadPretrainedModel', () => {
     });
   });
 
-  test('loads a pretrained model specified in the config with tf.loadModel', async () => {
+  test('loads a pretrained model specified in the config with tf.loadModel', (done) => {
     const loadModel = jest.spyOn(tf, 'loadModel');
-    const model = await loadPretrainedModel(PRETRAINED_MODELS_KEYS.MOBILENET);
-    expect(loadModel).toHaveBeenCalledWith(PRETRAINED_MODELS[PRETRAINED_MODELS_KEYS.MOBILENET].url);
+    loadPretrainedModel(PRETRAINED_MODELS_KEYS.MOBILENET).then(model => {
+      expect(loadModel).toHaveBeenCalledWith(PRETRAINED_MODELS[PRETRAINED_MODELS_KEYS.MOBILENET].url);
+      done();
+    });
   });
 });

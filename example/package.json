@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@babel/runtime-corejs2": "^7.3.4",
-    "@tensorflow/tfjs": "^0.15.3",
-    "ml-classifier": "^0.4.3"
+    "@tensorflow/tfjs": "^1.0.0"
   }
 }

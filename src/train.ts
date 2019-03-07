@@ -35,7 +35,7 @@ const getBatchSize = (batchSize?: number, xs?: tf.Tensor) => {
   return undefined;
 };
 
-const getModel = (pretrainedModel: tf.Model, data: IImageData, classes: number, params: IParams, args: IArgs) => {
+const getModel = (pretrainedModel: tf.LayersModel, data: IImageData, classes: number, params: IParams, args: IArgs) => {
   if (args.trainingModel) {
     if (typeof args.trainingModel === 'function') {
       return args.trainingModel(data, classes, params);
@@ -59,7 +59,7 @@ const getModel = (pretrainedModel: tf.Model, data: IImageData, classes: number, 
   return model;
 };
 
-const train = async (pretrainedModel: tf.Model, data: IImageData, classes: number, params: IParams, args: IArgs) => {
+const train = async (pretrainedModel: tf.LayersModel, data: IImageData, classes: number, params: IParams, args: IArgs) => {
   const {
     xs,
     ys,

@@ -22,10 +22,7 @@ import {
 } from './types';
 
 class MLClassifier {
-  // private pretrainedModel: typeof tf.model;
-  // private pretrainedModel: any;
-  private pretrainedModel: tf.Model;
-  // private model: tf.Sequential;
+  private pretrainedModel: tf.LayersModel;
   private model: any;
   private callbacks: Function[] = [];
   private args: IArgs;

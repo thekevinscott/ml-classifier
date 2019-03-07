@@ -11,22 +11,22 @@ export const PRETRAINED_MODELS = {
   },
 };
 
-const loadPretrainedModel = async (pretrainedModel: string | tf.Model = PRETRAINED_MODELS_KEYS.MOBILENET) => {
-  if (pretrainedModel instanceof tf.Model) {
-    return pretrainedModel;
+const loadPretrainedModel = async (pretrainedModel: string | tf.LayersModel = PRETRAINED_MODELS_KEYS.MOBILENET) => {
+  if (typeof pretrainedModel === 'string') {
+    if (!PRETRAINED_MODELS[pretrainedModel]) {
+      throw new Error('You have supplied an invalid key for a pretrained model');
+    }
+
+    const config = PRETRAINED_MODELS[pretrainedModel];
+    const model = await tf.loadLayersModel(config.url);
+    const layer = model.getLayer(config.layer);
+    return tf.model({
+      inputs: [model.inputs[0]],
+      outputs: layer.output,
+    });
   }
 
-  if (!PRETRAINED_MODELS[pretrainedModel]) {
-    throw new Error('You have supplied an invalid key for a pretrained model');
-  }
-
-  const config = PRETRAINED_MODELS[pretrainedModel];
-  const model = await tf.loadLayersModel(config.url);
-  const layer = model.getLayer(config.layer);
-  return tf.model({
-    inputs: [model.inputs[0]],
-    outputs: layer.output,
-  });
+  return pretrainedModel;
 };
 
 export default loadPretrainedModel;
