@@ -1,4 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
+export const tf2 = tf;
 import cropAndResizeImage from './cropAndResizeImage';
 import getClasses from './getClasses';
 import train from './train';
@@ -6,7 +7,6 @@ import translateImages, {
   IImageData,
 } from './translateImages';
 import loadPretrainedModel from './loadPretrainedModel';
-// import log, { resetLog } from './log';
 import {
   addData,
   addLabels,
@@ -19,16 +19,10 @@ import {
   IData,
   ICollectedData,
   IArgs,
-  // DataType,
 } from './types';
 
-// export { DataType } from './types';
-
 class MLClassifier {
-  // private pretrainedModel: typeof tf.model;
-  // private pretrainedModel: any;
-  private pretrainedModel: tf.Model;
-  // private model: tf.Sequential;
+  private pretrainedModel: tf.LayersModel;
   private model: any;
   private callbacks: Function[] = [];
   private args: IArgs;
@@ -36,7 +30,7 @@ class MLClassifier {
     classes: {},
   };
 
-  constructor(args: IArgs) {
+  constructor(args: IArgs = {}) {
     this.args = args;
     this.init();
   }
@@ -112,6 +106,10 @@ class MLClassifier {
       throw new Error(`Datatype ${dataType} unsupported`);
     }
 
+    if (!this.data[dataType]) {
+      throw new Error(`Data for datatype ${dataType} not yet added`);
+    }
+
     return {
       xs: this.data[dataType].xs,
       ys: this.data[dataType].ys,
@@ -123,10 +121,10 @@ class MLClassifier {
 
   public addData = async (origImages: Array<tf.Tensor | IImageData | HTMLImageElement | string>, origLabels: string[], dataType: string = 'train') => {
     this.callbackFn('onAddData', 'start', origImages, origLabels, dataType);
-    if (!origImages) {
+    if (!origImages || !origImages.length) {
       throw new Error('You must supply images');
     }
-    if (!origLabels) {
+    if (!origLabels || !origLabels.length) {
       throw new Error('You must supply labels');
     }
 

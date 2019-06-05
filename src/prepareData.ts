@@ -17,6 +17,10 @@ const oneHot = (labelIndex: number, classLength: number) => tf.tidy(() => tf.one
 // }), undefined);
 
 export const addData = (tensors: tf.Tensor[]): tf.Tensor => {
+  if (!tensors.length) {
+    throw new Error('You tried to add an empty tensor');
+  }
+
   const data = tf.keep(tensors[0]);
   return tensors.slice(1).reduce((data: tf.Tensor, tensor: tf.Tensor) => tf.tidy(() => {
     const newData = tf.keep(data.concat(tensor, 0));
@@ -33,7 +37,7 @@ export const addLabels = (labels: string[], classes: IClasses): tf.Tensor2D | un
 
   return labels.reduce((data: tf.Tensor2D | undefined, label: string) => {
     const labelIndex = classes[label];
-    const y = oneHot(labelIndex, classLength);
+    const y = oneHot(labelIndex, classLength) as tf.Tensor2D;
 
     return tf.tidy(() => {
       if (data === undefined) {
@@ -42,9 +46,6 @@ export const addLabels = (labels: string[], classes: IClasses): tf.Tensor2D | un
 
       const old = data;
       const ys = tf.keep(old.concat(y, 0));
-
-      old.dispose();
-      y.dispose();
 
       return ys;
     });

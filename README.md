@@ -49,7 +49,7 @@ await mlClassifier.train(imageData, {
     onTrainBegin: () => {
       console.log('training begins');
     },
-    onBatchEnd: (batch: any,logs: any) => {
+    onBatchEnd: (batch, logs) => {
       console.log('Loss is: ' + logs.loss.toFixed(5));
     }
   },
@@ -232,7 +232,7 @@ Nothing.
 ```
 import MLClassifier from 'ml-classifier';
 const mlClassifier = new MLClassifier();
-mlClassifier.addData(images, labels, DataType.TRAIN);
+mlClassifier.addData(images, labels, 'train');
 mlClassifier.train({
   callbacks: {
     onTrainBegin: () => {
@@ -259,9 +259,9 @@ mlClassifier.train({
 ```
 import MLClassifier from 'ml-classifier';
 const mlClassifier = new MLClassifier();
-mlClassifier.addData(images, labels, DataType.TRAIN);
+mlClassifier.addData(images, labels, 'train');
 mlClassifier.train();
-mlClassifier.addData(evaluationImages, labels, DataType.EVALUATE);
+mlClassifier.addData(evaluationImages, labels, 'evaluate');
 mlClassifier.evaluate();
 ```
 
@@ -282,7 +282,7 @@ mlClassifier.evaluate();
 ```
 import MLClassifier from 'ml-classifier';
 const mlClassifier = new MLClassifier();
-mlClassifier.addData(images, labels, DataType.TRAIN);
+mlClassifier.addData(images, labels, 'train');
 mlClassifier.train();
 mlClassifier.predict(imageToPredict);
 ```
@@ -304,7 +304,7 @@ mlClassifier.predict(imageToPredict);
 ```
 import MLClassifier from 'ml-classifier';
 const mlClassifier = new MLClassifier();
-mlClassifier.addData(images, labels, DataType.TRAIN);
+mlClassifier.addData(images, labels, 'train');
 mlClassifier.train();
 mlClassifier.save(('path-to-save');
 ```
@@ -324,7 +324,7 @@ mlClassifier.save(('path-to-save');
 ```
 import MLClassifier from 'ml-classifier';
 const mlClassifier = new MLClassifier();
-mlClassifier.addData(images, labels, DataType.TRAIN);
+mlClassifier.addData(images, labels, 'train');
 mlClassifier.train();
 mlClassifier.getModel();
 ```
@@ -345,13 +345,13 @@ The saved Tensorflow.js model.
 ```
 import MLClassifier from 'ml-classifier';
 const mlClassifier = new MLClassifier();
-mlClassifier.addData(images, labels, DataType.TRAIN);
-mlClassifier.clearData(DataType.TRAIN);
+mlClassifier.addData(images, labels, 'train');
+mlClassifier.clearData('train');
 ```
 
 #### Parameters
 
-* **dataType** (`DataType`) *Optional* - specifies which data to clear. If no argument is provided, all data will be cleared.
+* **dataType** (`string`) *Optional* - specifies which data to clear. If no argument is provided, all data will be cleared.
 
 #### Returns
 
